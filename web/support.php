@@ -68,7 +68,7 @@ if($_POST["support-message"]) {
                     </p>
                 <?php  } ?>
 
-                Support jain.
+                Support Jain.
 
                 <form method="post" class="support-form" novalidate>
                     <input type="hidden" name="support-message" value="1">
