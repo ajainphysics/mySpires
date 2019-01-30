@@ -5,7 +5,7 @@ session_start();
 $query = $_GET["q"];
 
 include_once "lib/settings.php";
-include_once "lib/mySpires.php";
+include_once "api/lib/mySpires.php";
 include_once "lib/functions.php";
 
 define("pageLabel", "share");
