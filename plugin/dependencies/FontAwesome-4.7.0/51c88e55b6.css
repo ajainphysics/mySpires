@@ -1,0 +1,16 @@
+/*!
+ *  Font Awesome v4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */
+@import url('font-awesome-css.min.css');
+/* FONT PATH
+ * -------------------------- */
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('fontawesome-webfont.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+/*
+Embed code 51c88e55b6
+*/

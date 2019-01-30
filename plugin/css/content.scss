@@ -1,0 +1,75 @@
+body.mySpires-arxiv-abs {
+  .mySpires-bar {
+    margin: 15px 20px 0 20px;
+  }
+}
+
+body.mySpires-inspire-record {
+  .mySpires-bar {
+    width: 70%;
+    margin: 30px auto 30px auto;
+  }
+}
+
+body.mySpires-inspire-search {
+  :not(form) > table {
+    width: 100%;
+    border-spacing: 0 1ex;
+    border-collapse: separate;
+  }
+
+  :not(form) > table td {
+    padding: 0.5ex 0;
+  }
+
+  div.moreinfo:last-child {
+    margin-bottom: 0;
+  }
+
+  tr.saved > td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left: 5px solid #007bff;
+    min-width: 30px;
+  }
+
+  .mySpires-bar {
+    margin-top: .8ex;
+  }
+}
+
+body.mySpires-arxiv-search {
+  tr.saved > td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left: 5px solid #007bff;
+    min-width: 30px;
+  }
+
+  .mySpires-bar {
+    margin-top: .8ex;
+  }
+}
+
+body.mySpires-arxiv-search {
+  li.saved {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left: 5px solid #007bff;
+    min-width: 30px;
+
+    padding-left: 10px;
+  }
+}
+
+body.mySpires-arxiv-list {
+  div.saved {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-left: 5px solid #007bff;
+    min-width: 30px;
+
+    margin-left: -20px;
+    padding-left: 15px;
+  }
+}

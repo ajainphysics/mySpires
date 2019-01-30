@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>mySpires</title>
+    <link href="dependencies/FontAwesome-4.7.0/51c88e55b6.css" rel="stylesheet">
+    <link href='dependencies/Lato.css' rel='stylesheet' type='text/css'>
+    <link href="dependencies/jquery-ui.min.css" rel="stylesheet">
+    <link href="dependencies/bootstrap.css" rel="stylesheet">
+    <link href="dependencies/awesomplete.css" rel="stylesheet">
+    <link href="mySpires/mySpires_Bar.css" rel="stylesheet">
+    <link href="css/popup.css" rel="stylesheet">
+</head>
+
+<body class="popup-body">
+
+<div class="header">
+    <h1>mySpires. <span class="version"></span></h1>
+    <div class="busy-loader-wrapper">
+        <div class="loader busy-loader"></div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="popup_alerts"></div>
+
+    <div id="login_msg_box">
+        <form id="login" method="post">
+            <div>
+                <span id="login_msg"></span>
+            </div>
+            <input type="text" id="username" name="username" placeholder="Username/Email" class="text-input">
+            <input type="password" id="password" name="password" placeholder="Password" class="text-input">
+            <div>
+                <input id="remember" type="checkbox" name="remember" value="1">
+                <label for="remember">Remember Me</label>
+            </div>
+            <button class="btn btn-sm btn-block btn-primary">Submit</button>
+            <div class="login-links">
+                <a id="forgot_password" target="_blank" href="#">Forgot Password?</a>
+                <a id="register" target="_blank" href="#">Register</a>
+            </div>
+        </form>
+    </div>
+
+    <div id="logged_in_content">
+        <span id="welcome">&nbsp;</span>
+
+        <div class="main-buttons">
+            <a id="db_btn" target="_blank" class="btn btn-sm btn-primary">Library</a>
+            <a id="recent_btn" target="_blank" class="btn btn-sm btn-primary">History</a>
+        </div>
+    </div>
+</div>
+
+<div id="record-wrapper">
+    <div id="record-subwrapper">
+        <h2 id="record-title"></h2>
+        <p id="record-author"></p>
+        <div class='mySpires-bar homeserver smallbar'></div>
+    </div>
+</div>
+
+<div class="footbar">
+    <span class="footlinks"></span>
+</div>
+
+<script src="dependencies/browser-polyfill.js"></script>
+<script src="dependencies/jquery-3.2.1.min.js"></script>
+<script src="dependencies/jquery-ui.min.js"></script>
+<script src="dependencies/awesomplete.js"></script>
+<script src="mySpires/mySpires.js"></script>
+<script src="mySpires/mySpires_Bar.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/popup.js"></script>
+
+</body>
+</html>

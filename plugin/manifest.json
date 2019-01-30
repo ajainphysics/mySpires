@@ -1,0 +1,77 @@
+{
+  "manifest_version": 2,
+  "name": "mySpires",
+  "description": "An unofficial assistant for inspirehep.net and arxiv.org.",
+  "version": "0.4.6",
+
+  "author": "Akash Jain",
+  "homepage_url": "https://myspires.ajainphysics.com",
+
+  "icons": {
+    "16": "icons/mySpires16.png",
+    "19": "icons/mySpires19.png",
+    "48": "icons/mySpires48.png",
+    "128": "icons/mySpires128.png"
+  },
+
+  "background": {
+    "scripts": [
+      "dependencies/browser-polyfill.js",
+      "dependencies/jquery-3.2.1.min.js",
+      "mySpires/mySpires.js",
+      "js/background.js"
+    ]
+  },
+
+  "browser_action": {
+    "default_icon": "icons/mySpires19.png",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "*://inspirehep.net/search*",
+        "*://inspirehep.net/record/*",
+        "*://arxiv.org/search*",
+        "*://arxiv.org/list/*",
+        "*://arxiv.org/abs/*"
+      ],
+      "css": [
+        "dependencies/bootstrap-buttons.css",
+        "dependencies/awesomplete.css",
+        "dependencies/jquery-ui.min.css",
+        "mySpires/mySpires_Bar.css",
+        "css/content.css"
+      ],
+      "js": [
+        "dependencies/browser-polyfill.js",
+        "dependencies/jquery-3.2.1.min.js",
+        "dependencies/jquery-ui.min.js",
+        "dependencies/awesomplete.js",
+        "mySpires/mySpires.js",
+        "mySpires/mySpires_Bar.js",
+        "js/tools.js",
+        "js/content.js"
+      ]
+    }
+  ],
+
+  "permissions": [
+    "*://inspirehep.net/*",
+    "*://myspires.ajainphysics.com/*",
+    "*://arxiv.org/*",
+    "activeTab"
+  ],
+
+  "web_accessible_resources": [
+    "fonts/*.ttf"
+  ],
+
+  "applications": {
+    "gecko": {
+      "id": "{0971bf29-05ec-47da-874e-b4c3c719bd4a}",
+      "update_url": "https://myspires.ajainphysics.com/bin/updates.json"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: field in /home/kz0qr7otxolj/myspires/api/index.php on line 12
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: search in /home/kz0qr7otxolj/myspires/api/index.php on line 24
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: q in /home/kz0qr7otxolj/myspires/api/index.php on line 27
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: save in /home/kz0qr7otxolj/myspires/api/index.php on line 40
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: remove in /home/kz0qr7otxolj/myspires/api/index.php on line 52
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: tag in /home/kz0qr7otxolj/myspires/api/index.php on line 61
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: timeframe in /home/kz0qr7otxolj/myspires/api/index.php on line 64
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: taglist in /home/kz0qr7otxolj/myspires/api/index.php on line 67
+[22-Nov-2018 22:52:19 Europe/London] PHP Notice:  Undefined index: share in /home/kz0qr7otxolj/myspires/api/index.php on line 70
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: field in /home/kz0qr7otxolj/myspires/api/index.php on line 12
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: search in /home/kz0qr7otxolj/myspires/api/index.php on line 24
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: q in /home/kz0qr7otxolj/myspires/api/index.php on line 27
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: save in /home/kz0qr7otxolj/myspires/api/index.php on line 45
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: remove in /home/kz0qr7otxolj/myspires/api/index.php on line 57
+[22-Nov-2018 23:02:37 Europe/London] PHP Notice:  Undefined index: share in /home/kz0qr7otxolj/myspires/api/index.php on line 75

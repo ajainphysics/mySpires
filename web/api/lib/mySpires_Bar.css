@@ -1,0 +1,165 @@
+.mySpires-bar {
+  text-align: left;
+  display: none;
+  margin-top: 5px;
+  font-size: 16px; }
+  .mySpires-bar, .mySpires-bar input, .mySpires-bar textarea, .mySpires-bar button {
+    font-family: "Lato", sans-serif; }
+  .mySpires-bar .form-input {
+    display: none; }
+  .mySpires-bar .btn {
+    padding: 1px 8px;
+    font-size: 80%;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 2px;
+    margin-bottom: 2px; }
+    .mySpires-bar .btn .tag-level-bars {
+      display: inline-block;
+      margin-left: -3px;
+      margin-right: 3px; }
+      .mySpires-bar .btn .tag-level-bars span {
+        border-left: 2px solid #555;
+        border-radius: 5px;
+        display: inline-block; }
+    .mySpires-bar .btn:hover .tag-level-bars span {
+      border-left-color: #F5F5F5; }
+  .mySpires-bar .toolbar {
+    display: flex;
+    flex-direction: row; }
+  .mySpires-bar .tooltitle {
+    font-weight: 600;
+    font-size: 90%;
+    float: left;
+    margin-top: 3px;
+    margin-right: 7px; }
+  .mySpires-bar .buttons-wrapper {
+    display: inline-block; }
+  .mySpires-bar .paper-comments {
+    font-size: 85%;
+    color: darkgreen;
+    margin-bottom: 0;
+    margin-top: 2px; }
+  .mySpires-bar .awesomplete {
+    width: 100%;
+    display: block; }
+  .mySpires-bar .tags-input {
+    padding: 3px 8px;
+    border: 1px solid gray;
+    border-radius: .2rem;
+    font-size: 80%;
+    font-weight: 600;
+    font-family: "Lato", sans-serif;
+    width: 100%; }
+  .mySpires-bar .comments-input {
+    padding: 3px 8px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    font-size: 85%;
+    font-family: "Lato", sans-serif;
+    color: darkgreen;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    width: 100%; }
+  .mySpires-bar .tags-warning {
+    font-size: 75%;
+    margin-top: 0;
+    margin-bottom: 5px;
+    line-height: 1.2;
+    color: #dc3545;
+    display: none; }
+  .mySpires-bar .form-buttons {
+    display: flex; }
+  .mySpires-bar .tags-wrapper {
+    float: left;
+    display: flex;
+    flex-wrap: wrap; }
+  .mySpires-bar .paper-tag .delete-tag {
+    display: none;
+    z-index: 2;
+    margin: 0 -1px 0 2px; }
+  .mySpires-bar .rot-dots {
+    flex-shrink: 0;
+    width: 15px;
+    height: 17px;
+    margin-left: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+    cursor: pointer; }
+    .mySpires-bar .rot-dots .rot-dots-wrapper {
+      width: 100px;
+      height: 100px;
+      margin-top: -40%;
+      margin-left: -15%;
+      transform: scale(0.18);
+      transform-origin: 0 0; }
+    .mySpires-bar .rot-dots .ball {
+      margin-left: 50%;
+      margin-top: 6%;
+      background: #808080;
+      width: 25%;
+      height: 25%;
+      border-radius: 50%;
+      -o-transition: .15s;
+      -ms-transition: .15s;
+      -moz-transition: .15s;
+      -webkit-transition: .15s;
+      transition: .15s; }
+    .mySpires-bar .rot-dots:hover .ball {
+      background: #343a40; }
+    .mySpires-bar .rot-dots.busy {
+      cursor: wait; }
+      .mySpires-bar .rot-dots.busy .ball:nth-child(2) {
+        animation: rotate-1 1s linear infinite;
+        z-index: 2; }
+  .mySpires-bar.smallbar .btn {
+    padding: 0 5px;
+    font-size: 75%; }
+  .mySpires-bar.smallbar .tooltitle {
+    font-size: 85%;
+    margin-top: 2px; }
+  .mySpires-bar.smallbar .rot-dots {
+    height: 15px;
+    margin-left: 0; }
+    .mySpires-bar.smallbar .rot-dots .rot-dots-wrapper {
+      margin-left: -5%;
+      transform: scale(0.15); }
+
+.unsaved .mySpires-bar .edit-button, .unsaved .mySpires-bar .toolbar .sep, .unsaved .mySpires-bar .tags-wrapper, .unsaved .mySpires-bar .paper-comments, .binned .mySpires-bar .edit-button, .binned .mySpires-bar .toolbar .sep, .binned .mySpires-bar .tags-wrapper, .binned .mySpires-bar .paper-comments {
+  display: none !important; }
+
+.saved .mySpires-bar .save-button, .binned .mySpires-bar .save-button {
+  display: none !important; }
+
+.saved .mySpires-bar .restore-button, .unsaved .mySpires-bar .restore-button {
+  display: none !important; }
+
+.erase-button {
+  display: none; }
+
+#page-bin .binned .mySpires-bar .erase-button {
+  display: inline-block; }
+
+.mySpires-bar.homeserver .toolbar .tooltitle {
+  display: none; }
+
+@keyframes rotate-1 {
+  0% {
+    transform: rotate(0deg);
+    transform-origin: center 112%; }
+  25% {
+    transform: rotate(-180deg);
+    transform-origin: center 112%; }
+  50% {
+    transform: rotate(-360deg);
+    transform-origin: center 112%; }
+  50.1% {
+    transform-origin: center -12%; }
+  75% {
+    transform: rotate(-180deg);
+    transform-origin: center -12%; }
+  100% {
+    transform: rotate(0deg);
+    transform-origin: center -12%; } }
+
+/*# sourceMappingURL=mySpires_Bar.css.map */

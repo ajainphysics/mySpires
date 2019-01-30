@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test inspireList</title>
+
+    <!-- We will need jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+    
+    <script src="refSpires.js"></script>
+
+    <script>
+     $(function() {
+       RefSpires.opts = {
+           boldAuthor: "Akash Jain",
+           itemClasses: "item",
+           itemIdPrefix: "list"
+       };
+         RefSpires.load();
+     });
+    </script>
+  </head>
+
+  <body>
+  Akash Jain
+    <ul class="inspireList" data-query="find ea Appels, Michael"
+	data-opts='{"boldAuthor":"Leopoldo Cuspinera"}'></ul>
+  </body>
+</html>
