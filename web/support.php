@@ -68,6 +68,8 @@ if($_POST["support-message"]) {
                     </p>
                 <?php  } ?>
 
+                Support.
+
                 <form method="post" class="support-form" novalidate>
                     <input type="hidden" name="support-message" value="1">
                     <input id="message-username" type="hidden" name="message-username" value="<?php if($user) echo $user->username; ?>">
