@@ -42,6 +42,7 @@ class mySpires {
     }
 
     static get hostname() {
+        if(location.host === "myspires-dev.ajainphysics.com") return location.host;
         return "myspires.ajainphysics.com"
     }
 

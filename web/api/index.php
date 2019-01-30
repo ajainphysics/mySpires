@@ -32,9 +32,8 @@ if($username) {
     mySa::stat_step_daily("api_unauth_calls");
 }
 
-
 header("Access-Control-Allow-Credentials: true");
-header("Access-Control-Allow-Origin: *");
+// header("Access-Control-Allow-Origin: https://myspires-dev.ajainphysics.com");
 header("Content-Type: application/json; charset=utf-8");
 
 /* ============================== UNAUTH OPERATIONS ============================== */
