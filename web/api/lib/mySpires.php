@@ -7,10 +7,12 @@
  * @author Akash Jain
  */
 
-ini_set("include_path", '/home/kz0qr7otxolj/php:' . ini_get("include_path") );
-require_once __DIR__ . "/../../plugins/simplepie-1.5/autoloader.php"; // SimplePie package for arXiv queries.
+ini_set("include_path",
+    '/home/kz0qr7otxolj/php:/home/kz0qr7otxolj/resources:/home/kz0qr7otxolj/cdn:'
+    . ini_get("include_path") );
 
-require_once __DIR__ . "/../../refSpires/refSpires.php";
+require_once "simplepie-1.5/autoloader.php"; // SimplePie package for arXiv queries.
+require_once "refspires/refSpires.php";
 
 $config = include(__DIR__ . "/../../../.myspires_config.php");
 

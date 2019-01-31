@@ -51,7 +51,7 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 
     <!-- Awesomeplete CSS - For autocomplete, if you do not want to use qQuery UI for this. -->
-    <link rel="stylesheet" href="js/awesomplete/awesomplete.css" />
+    <link rel="stylesheet" href="//resources.ajainphysics.com/awesomplete/awesomplete.css" />
 
     <!-- The main website CSS -->
     <link href="api/lib/mySpires_Bar.css" rel="stylesheet">

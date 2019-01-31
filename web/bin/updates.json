@@ -1,16 +1,1 @@
-{
-  "addons": {
-    "{0971bf29-05ec-47da-874e-b4c3c719bd4a}": {
-      "updates": [
-        {
-          "version": "0.3.10",
-          "update_link": "https://myspires.ajainphysics.com/bin/myspires-0.3.10-an+fx.xpi"
-        },
-        {
-          "version": "0.4.1",
-          "update_link": "https://myspires.ajainphysics.com/bin/myspires-0.4.1-fx.xpi"
-        }
-      ]
-    }
-  }
-} 
+{"addons":{"{0971bf29-05ec-47da-874e-b4c3c719bd4a}":{"updates":[{"version":"0.4.6","update_link":"https://myspires.ajainphysics.com/bin/myspires-0.4.6-fx.xpi"}]}}}

@@ -1,7 +1,7 @@
 <?php
 
 require_once 'File/MARCXML.php'; // File_MARCXML package for INSPIRE queries.
-require_once __DIR__ . "/../plugins/simplepie-1.5/autoloader.php"; // SimplePie package for arXiv queries.
+require_once "simplepie-1.5/autoloader.php"; // SimplePie package for arXiv queries.
 
 class InspireRecords {
     /** @var InspireRecord[] */

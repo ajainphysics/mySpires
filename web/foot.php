@@ -16,16 +16,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
 
 <!-- jQuery.dotdotdot: Ellipsis for text TODO: This is too resource consuming -->
-<script src="js/jQuery.dotdotdot/jquery.dotdotdot.min.js" type="text/javascript"></script>
+<script src="//resources.ajainphysics.com/jQuery.dotdotdot/jquery.dotdotdot.min.js" type="text/javascript"></script>
 
-<script src="js/awesomplete/awesomplete.min.js" async></script>
+<script src="//resources.ajainphysics.com/awesomplete/awesomplete.min.js" async></script>
 
 <script src="js/global.js"></script>
 
 <script src="api/lib/mySpires.js"></script>
 <script src="api/lib/mySpires_Bar.js"></script>
 <script src="js/components.js"></script>
-<script src="refSpires/refSpires.js"></script>
+
+<script src="//cdn.ajainphysics.com/refspires/refSpires.js"></script>
 
 <?php if(file_exists(__DIR__."/js/".pageLabel.".js")) { ?>
     <script src="js/<?php echo pageLabel; ?>.js"></script>
