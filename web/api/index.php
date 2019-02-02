@@ -12,10 +12,12 @@ include_once "lib/mySa.php";
 if (!$_POST) $_POST = $_GET;
 
 null_populate($_POST, [
-    "field","q","search",
-    "save","remove","erase",
+    "field", "q", "search",
+    "save", "remove", "erase",
     "share",
-    "tag","timeframe","taglist","history","bin",
+    "tag", "timeframe", "taglist",
+    "history", "set_history_status", "purge_history",
+    "bin",
     "delete_tag", "rename_tag", "new_name", "star_tag", "describe_tag",
     "val",
     "login", "logout", "username", "password", "remember",
@@ -158,15 +160,6 @@ if ($_POST["timeframe"]) {
     exit;
 }
 
-// Load all entries in history
-if ($_POST["history"]) {
-    $result = new mySpires_Records($_POST["history"], "history"); // History
-    $total = mySpires::db_query("SELECT count(*) as total FROM history WHERE username = '{$username}'");
-    $total = $total->fetch_assoc()["total"];
-    echo json_encode(["data" => $result, "total" => $total]);
-    exit;
-}
-
 // Load all entries in bin
 if ($_POST["bin"]) {
     $result = new mySpires_Records($_POST["bin"], "bin"); // History
@@ -175,6 +168,8 @@ if ($_POST["bin"]) {
     echo json_encode(["data" => $result, "total" => $total]);
     exit;
 }
+
+/* ============================== TAG MANIPULATIONS ============================== */
 
 // Returns a list of tags
 if ($_POST["taglist"]) {
@@ -210,6 +205,30 @@ if ($_POST["describe_tag"] && $_POST["val"] !== null) {
     exit;
 }
 
+/* ============================== HISTORY OPERATIONS ============================== */
+
+// Load all entries in history
+if ($_POST["history"]) {
+    $result = new mySpires_Records($_POST["history"], "history"); // History
+    $total = mySpires::db_query("SELECT count(*) as total FROM history WHERE username = '{$username}'");
+    $total = $total->fetch_assoc()["total"];
+    echo json_encode(["data" => $result, "total" => $total]);
+    exit;
+}
+
+if($_POST["set_history_status"] !== null) {
+    mySpiresUser::update_info(["history_enabled" => boolval($_POST["set_history_status"])]);
+    echo json_encode(true);
+    exit;
+}
+
+if($_POST["purge_history"]) {
+    echo json_encode(mySpires::purge_history());
+    exit;
+}
+
+/* ============================== SHARING OPERATIONS ============================== */
+
 // Sharing
 if ($share = $_POST["share"]) {
     $e = explode('/', $share, 2);
@@ -218,6 +237,8 @@ if ($share = $_POST["share"]) {
     echo json_encode(mySpires::sharedtag($tag, $owner_username));
     exit;
 }
+
+/* ============================== USER INFO ============================== */
 
 // If nothing works, return user information
 echo json_encode([

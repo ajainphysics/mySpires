@@ -475,6 +475,10 @@ body {
 
 /* ============================== Library Page ============================== */
 
+#title-nav #page-title.main-title {
+  margin-bottom: 0;
+}
+
 #page-library {
   #title-nav {
     display: none;
@@ -482,10 +486,6 @@ body {
 
   .unsaved {
     display: none;
-  }
-
-  #page-title.main-title {
-    margin-bottom: 0;
   }
 
   #edit-tag-form {
@@ -551,6 +551,22 @@ body:not(.library-tag-Untagged) .untagged-show {
 
 /* ============================== History Page ============================== */
 
+#history-disabled {
+  margin-bottom: 1.5rem;
+
+  .enable-history-button {
+    display: block;
+    margin: 1.2rem auto;
+  }
+}
+
+#residual-history-message,
+#empty-history-message,
+#empty-library-message,
+#empty-message {
+  display: none;
+}
+
 .history-section {
   .history-title {
     cursor: pointer;
@@ -576,7 +592,7 @@ body:not(.library-tag-Untagged) .untagged-show {
   font-family: "Lato", sans-serif;
 }
 
-#history-load-more {
+.load-more-boxes {
   height: 40px;
   margin-top: 10px;
   margin-bottom: 50px;

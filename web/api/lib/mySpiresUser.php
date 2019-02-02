@@ -36,6 +36,9 @@ class mySpiresUser {
 
             if($result = $query->get_result()->fetch_object()) {
                 $result->name = $result->first_name . " " . $result->last_name;
+                $result->display_name = $result->first_name;
+                if(!$result->display_name) $result->display_name = $result->username;
+
                 return $result;
             }
         }

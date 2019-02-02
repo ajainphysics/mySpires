@@ -73,7 +73,7 @@ if($_POST["reset-password"]) {
     <div class="main-content">
         <div class="container">
             <div class="registration-form-wrapper">
-                <img class="mySpires-logo" src="img/mySpires.png" alt="mySpires">
+                <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
 
                 <?php webapp::display_alerts(); ?>
 

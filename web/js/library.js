@@ -64,10 +64,6 @@ function load_library(tag) {
 
     mySpires.prepare().then(function() {
         let properties = mySpires.tagsinfo[tag];
-        if(properties === undefined) {
-            goto_tag("", true);
-            return;
-        }
 
         // Title and Breadcrumb
 
@@ -81,6 +77,11 @@ function load_library(tag) {
             $titleNav.css("display", "flex");
         }
         else {
+            if(properties === undefined) {
+                goto_tag("", true);
+                return;
+            }
+
             $body.addClass("library-tag-" + tag_);
 
             let tagEx = tag.split("/");
@@ -186,6 +187,10 @@ function load_library(tag) {
                 $subtags.prepend("<h4 class='tags-heading'>Tags (" + subtags_count + ")</h4>");
             else
                 $subtags.prepend("<h4 class='tags-heading'>Subtags (" + subtags_count + ")</h4>");
+        }
+
+        if(properties === undefined && subtags_count === 0) {
+            $("#empty-library-message").show();
         }
 
         // Records

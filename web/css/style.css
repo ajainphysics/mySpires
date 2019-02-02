@@ -289,12 +289,13 @@ body {
     color: dimgray; }
 
 /* ============================== Library Page ============================== */
+#title-nav #page-title.main-title {
+  margin-bottom: 0; }
+
 #page-library #title-nav {
   display: none; }
 #page-library .unsaved {
   display: none; }
-#page-library #page-title.main-title {
-  margin-bottom: 0; }
 #page-library #edit-tag-form {
   margin-bottom: 15px;
   margin-top: -15px;
@@ -338,6 +339,18 @@ body:not(.library-tag-Untagged) .untagged-show {
   display: none; }
 
 /* ============================== History Page ============================== */
+#history-disabled {
+  margin-bottom: 1.5rem; }
+  #history-disabled .enable-history-button {
+    display: block;
+    margin: 1.2rem auto; }
+
+#residual-history-message,
+#empty-history-message,
+#empty-library-message,
+#empty-message {
+  display: none; }
+
 .history-section .history-title {
   cursor: pointer;
   display: none; }
@@ -356,11 +369,11 @@ body:not(.library-tag-Untagged) .untagged-show {
   font-weight: 600;
   font-family: "Lato", sans-serif; }
 
-#history-load-more {
+.load-more-boxes {
   height: 40px;
   margin-top: 10px;
   margin-bottom: 50px; }
-  #history-load-more .btn {
+  .load-more-boxes .btn {
     display: none;
     margin: 0 auto; }
 

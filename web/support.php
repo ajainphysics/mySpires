@@ -56,7 +56,7 @@ if($_POST["support-message"]) {
 
             <?php webapp::display_alerts(); ?>
 
-            <img class="mySpires-logo" src="img/mySpires.png" alt="mySpires">
+            <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
 
             <?php if($user) { ?>
                 <p class="introduction">
@@ -65,6 +65,7 @@ if($_POST["support-message"]) {
 
                 <div class="help-toc list-group">
                     <a href="#help-intro" class="list-group-item list-group-item-action">What is mySpires</a>
+                    <a href="#help-plugin" class="list-group-item list-group-item-action">Browser Plugin</a>
                     <a href="#help-add" class="list-group-item list-group-item-action">Adding Records to mySpires</a>
                     <a href="#help-tags-comments" class="list-group-item list-group-item-action">Tags and Comments</a>
                     <a href="#help-delete" class="list-group-item list-group-item-action">Deleting Records and Bin</a>
@@ -87,11 +88,21 @@ if($_POST["support-message"]) {
                     </p>
 
                     <p>
-                        mySpires does this magic via a browser plugin (available for <a href="https://chrome.google.com/webstore/detail/myspires/ejidfomdndeogeipjkjigaeaeohbgcpf" target="_blank">Google Chrome</a> and <a href="bin" target="_blank">Mozilla Firefox</a>). Whenever you visit <a href="https://inspirehep.net" target="_blank">inspirehep.net</a> or <a href="https://arxiv.org" target="_blank">arxiv.org</a>, the plugin adds a small snippet to the page that allows you to add or modify a record in your library without ever having to interrupt your workflow. If you choose to, you can take it a step further and ask mySpires to keep a history of the references you visit. You can revisit your history later at any time and save the records that you found were helpful.
+                        mySpires does this magic via a browser plugin (see <a href="#help-plugin">here</a>). Whenever you visit <a href="https://inspirehep.net" target="_blank">inspirehep.net</a> or <a href="https://arxiv.org" target="_blank">arxiv.org</a>, the plugin adds a small snippet to the page that allows you to add or modify a record in your library without ever having to interrupt your workflow. If you choose to, you can take it a step further and ask mySpires to keep a history of the references you visit. You can revisit your history later at any time and save the records that you found were helpful.
                     </p>
 
                     <p>
                         mySpires maintains a BibTeX database for you of all the records that you add to your library. If you are into automation, you can link your <a href="https://www.dropbox.com" target="_blank">Dropbox</a> account and mySpires will keep an uptodate copy of your BibTeX database in your Dropbox folder. You can refer to this file in your TeX projects, or better yet, symlink it to your texmf folder. Possibilities are endless.
+                    </p>
+
+                </section>
+
+                <section class="help-section">
+                    <div id="help-plugin" class="fake-anchor"></div>
+                    <h2>Browser Plugin</h2>
+
+                    <p>
+                        mySpires works best in conjunction with its browser plugin. The plugin is currently available for <a href="https://chrome.google.com/webstore/detail/myspires/ejidfomdndeogeipjkjigaeaeohbgcpf" target="_blank">Google Chrome</a> and <a href="bin" target="_blank">Mozilla Firefox</a>. As of now, mySpires plugin is not available for Microsoft Edge or Apple Safari.
                     </p>
 
                 </section>

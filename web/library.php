@@ -86,6 +86,13 @@ if (!mySpiresUser::current_username()) {
                 </div>
             </nav>
 
+            <div id="empty-library-message">
+                <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
+                <p class="introduction">
+                    Hey <?php echo $user->display_name; ?>! You have not added any records to your mySpires library yet. If you have the <a href="support.php#help-plugin">mySpires browser plugin</a> installed, you can add records on the go when you visit inspirehep.net or arxiv.org. Otherwise, head over to the <a href="/">Welcome</a> page to add some records manually. Find more information on the <a href="support.php#help-add">Support</a> page.
+                </p>
+            </div>
+
             <p id="tag-description"></p>
 
             <div class="edit-tag">

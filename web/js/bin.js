@@ -21,7 +21,11 @@ mySpiresBin.load = function() {
     return new Promise((resolve) => {
         mySpires.bin(range).then(function(response) {
             let records = response.records,
-                total = response.total;
+                total = Number(response.total);
+
+            if(!total) {
+                $("#empty-message").show();
+            }
 
             console.log(records);
 

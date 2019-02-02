@@ -3,7 +3,7 @@
 const mySpiresHistory = {};
 
 $(function () {
-    mySpiresHistory.$loadMore = $("#history-load-more .btn");
+    mySpiresHistory.$loadMore = $(".load-more-boxes .btn");
     mySpiresHistory.totalLoaded = 0;
     mySpiresHistory.chunks = 40;
 
@@ -21,7 +21,13 @@ mySpiresHistory.load = function() {
     return new Promise((resolve) => {
         mySpires.history(range).then(function(response) {
             let records = response.records,
-                total = response.total;
+                total = Number(response.total);
+
+            if(total) {
+                $("#residual-history-message").show();
+            } else {
+                $("#empty-history-message").show();
+            }
 
             jQuery.each(records, function (index, record) {
                 let a = new mySpires_Box(record);
@@ -40,70 +46,22 @@ mySpiresHistory.load = function() {
     });
 };
 
-/*
-
-function tagShow(timeframe) {
-    let $currentSection = $("#section-" + timeframe);
-
-    return new Promise((resolve) => {
-        mySpires.timeframe(timeframe).then(function(records) {
-            if(Object.keys(records).length === 0) {
-                $currentSection.remove();
-                resolve();
-                return;
-            }
-
-            if(firstSection === true) firstSection = false;
-
-            jQuery.each(records, function (index, record) {
-                new mySpires_Box(record, "#section-" + timeframe);
-                // entryBox.loadEntry(entry, "#section-" + timeframe);
-            });
-
-            sortPapers("modified", "desc", "#section-" + timeframe);
-
-            $currentSection.find(".history-title").fadeIn(200);
-            resolve();
-        });
-    });
-}
-
-
-function sectionShow(timeframe) {
-    let $currentSection = $("#section-" + timeframe);
-    $currentSection.toggleClass("active");
-
-    if($currentSection.hasClass("active")) {
-        $currentSection.find(".openable-arrow").toggleClass("fa-angle-double-down fa-angle-double-up");
-
-        let $ele = $currentSection.find(".paper-box").first();
-        let trigger = setInterval(function() {
-            $ele.show(300);
-            $ele = $ele.next();
-            if($ele.length === 0) clearInterval(trigger);
-        }, 10);
-    } else {
-        $currentSection.find(".openable-arrow").toggleClass("fa-angle-double-down fa-angle-double-up");
-        $currentSection.find(".paper-box").hide(300)
-    }
-}
-
 $(function () {
-    let tagShowPromise = [];
-
-    $(".history-section").each(function () {
-        let timeframe = $(this).attr("id").split("section-")[1];
-        tagShowPromise.push(tagShow(timeframe));
+    $(".enable-history-button").click((e) => {
+        e.preventDefault();
+        mySpires.api({set_history_status: 1}).then((response) => {
+            if(response) location.reload();
+            else console.log("Something went wrong while activating history!");
+        }).catch(console.log)
     });
 
-    Promise.all(tagShowPromise).then(function() {
-        sectionShow($(".history-title").first().attr("id").split("title-")[1]);
-    });
-
-    $(".history-title").click(function () {
-        let timeframe = $(this).attr("id").split("title-")[1];
-        sectionShow(timeframe);
+    $(".purge-history-button").click((e) => {
+        e.preventDefault();
+        if(confirm("Are you sure you want to delete all your history? This action cannot be undone.")) {
+            mySpires.api({purge_history: 1}).then((response) => {
+                if(response) location.reload();
+                else console.log("Something went wrong while purging history!");
+            }).catch(console.log)
+        }
     });
 });
-
-*/

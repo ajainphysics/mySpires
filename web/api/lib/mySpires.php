@@ -179,7 +179,7 @@ class mySpires
         $limit = "";
         if(property_exists($filters,"count")) $limit = " LIMIT {$filters->offset},{$filters->count}";
 
-        $results = self::db_query("SELECT id FROM entries WHERE username = '{$username}' AND bin=" . (int)$filters->bin . $limit);
+        $results = self::db_query("SELECT id FROM entries WHERE username = '{$username}' AND bin=" . (int)$filters->bin . " ORDER BY updated DESC" . $limit);
 
         $records = [];
         while ($entry = $results->fetch_object())
@@ -454,6 +454,15 @@ class mySpires
         }
 
         return (object)["filename" => $filename, "contents" => $decorated_bibtex, "dropbox" => $dropbox_upload];
+    }
+
+    static function purge_history() {
+        $user = mySpiresUser::info();
+        if(!$user) return false;
+
+        mySpires::db_query("DELETE FROM history WHERE username = '{$user->username}'");
+
+        return true;
     }
 }
 
