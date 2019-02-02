@@ -73,3 +73,36 @@ function foot_alert(message, type = "primary", timeout = 5000) {
         }, timeout);
     }
 }
+
+/*
+
+if (location.hash) {
+    let hash = location.hash;
+    history.replaceState(null,null, location.href.split("#")[0]);
+
+    $(function() {
+        anchorScroll(hash);
+        // console.log(hash);
+        // history.pushState(null,null, hash);
+    });
+}
+
+$(function() {
+    $("a[href^='#']").click(function(e){
+        e.preventDefault();
+        let hash = $(this).attr("href");
+        anchorScroll(hash);
+        history.pushState(null,null, hash);
+    });
+});
+
+function anchorScroll(hash) {
+    console.log(1);
+    let $target = $(hash);
+    if($target.length) {
+        let top = $target.offset().top;
+        $(window).scrollTop(top - 60);
+    }
+}
+
+*/

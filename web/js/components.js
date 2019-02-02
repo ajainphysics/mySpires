@@ -93,7 +93,7 @@ class mySpires_Box
         if (record.arxiv) {
             this.thumbnail.append(
                 "<a href='" + link_arxiv_pdf + "' target='_blank'>"
-                + "<img src='thumbnails/" + record.id + ".jpg' class='img-thumbnail img-fluid'></a>"
+                + "<img src='" + mySpires.content_server + "thumbnails/" + record.id + ".jpg' class='img-thumbnail img-fluid'></a>"
             );
         }
 

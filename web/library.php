@@ -142,8 +142,6 @@ if (!mySpiresUser::current_username()) {
             </div>
         </div> <!-- /container -->
 
-        <!-- Bootstrap core JavaScript -->
-
     </div>
 
     <?php include "footbar.php"; ?>

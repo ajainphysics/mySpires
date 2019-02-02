@@ -42,7 +42,7 @@ class mySpires {
     }
 
     static get hostname() {
-        if(location.host === "myspires-dev.ajainphysics.com") return location.host;
+        if(location.host === "dev.myspires.ajainphysics.com") return location.host;
         return "myspires.ajainphysics.com"
     }
 
@@ -52,6 +52,10 @@ class mySpires {
      */
     static get server() {
         return "https://" + this.hostname + "/";
+    }
+
+    static get content_server() {
+        return "https://cdn.ajainphysics.com/myspires_content/"
     }
 
     /**

@@ -948,15 +948,12 @@ label.label-required::after {
   color: red;
 }
 
-.support-form-wrapper, .registration-form-wrapper {
+.registration-form-wrapper {
   max-width: 600px;
   margin: 0 auto;
+}
 
-  p {
-    font-size: 1.2rem;
-    text-align: justify;
-  }
-
+.help-section .support-form-wrapper, .registration-form-wrapper {
   label {
     margin-bottom: 0;
     margin-top: 0.2rem;
@@ -970,6 +967,8 @@ label.label-required::after {
   .btn {
     margin-top: 20px;
     display: block;
+    padding: .5rem .75rem;
+    font-size: 1rem;
   }
 }
 
@@ -1014,4 +1013,113 @@ label.label-required::after {
     width: auto;
     margin: -10px 10px -10px 0;
   }
+}
+
+.fake-anchor {
+  position: relative;
+  margin-top: -60px;
+  display: block;
+  visibility: hidden;
+  padding-top: 60px;
+}
+
+.help-toc {
+  max-width: 400px;
+
+  .list-group-item {
+    padding: 7px 15px;
+  }
+}
+
+.help-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #d4d4d4;
+
+  &:last-child {
+    border: none;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+
+  .btn {
+    font-size: 75%;
+    padding: 0 5px;
+    font-weight: bold;
+  }
+
+  .fa-ellipsis-v {
+    color: rgb(128, 128, 128);
+    font-size: 75%;
+    padding: 0 2px;
+  }
+
+  code, pre {
+    border-style: solid;
+    border-color: #d4d4d4;
+    border-width: 1px;
+    background-color: white;
+  }
+
+  pre {
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 0.5rem;
+  }
+
+  .support-form-wrapper {
+    // border-right: 1px solid #d4d4d4;
+  }
+
+  .contact-wrapper {
+    display: flex;
+  }
+
+  .contact-box {
+    margin: auto 10px;
+    height: 300px;
+    width: 100%;
+
+    @media (min-width: $min-md) {
+      border-left: 1px solid #d4d4d4;
+    }
+
+    @media (max-width: $max-sm) {
+      margin-top: 30px;
+    }
+
+    img {
+      border-radius: 50%;
+      height: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    p.contact-name {
+      font-size: 2rem;
+      margin-bottom: 0;
+    }
+
+    p.contact-subtitle {
+      color: #848484;
+      margin-bottom: 0;
+    }
+  }
+}
+
+p.introduction {
+  font-size: 1.2rem;
+  text-align: justify;
 }
