@@ -1,15 +1,20 @@
+<?php $user = mySpiresUser::info(); ?>
+
 <nav id="top-bar" class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
     <div class="container"> <!-- Navbar Container -->
 
-        <a class="navbar-brand" href=".">mySpires</a>
+        <?php if($user || pageLabel != "index") { ?>
+            <a class="navbar-brand" href=".">mySpires.</a>
+        <?php } ?>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#top-bar-collapse"
+        <button class="navbar-toggler ml-auto"
+                type="button" data-toggle="collapse" data-target="#top-bar-collapse"
                 aria-controls="top-bar-collapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="top-bar-collapse">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav ml-auto pt-3 pt-lg-0">
                 <?php
                 $user = mySpiresUser::info();
                 foreach(Array("index", "library", "history") as $label) {

@@ -55,7 +55,7 @@ if (!mySpiresUser::current_username()) {
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="title-nav-collapse">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto pt-2 pt-lg-0">
                         <li class="nav-item dropdown untagged-hide">
                             <a id="bibtexlink" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
                                aria-expanded="false">

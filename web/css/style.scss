@@ -38,7 +38,7 @@ body {
   flex-grow: 1;
   border-bottom: 2px solid #c5c5c5;
   padding-top: 30px;
-  padding-bottom: 30px;
+  padding-bottom: 50px;
   overflow-x: hidden;
 }
 
@@ -595,7 +595,6 @@ body:not(.library-tag-Untagged) .untagged-show {
 .load-more-boxes {
   height: 40px;
   margin-top: 10px;
-  margin-bottom: 50px;
 
   .btn {
     display: none;
@@ -615,8 +614,44 @@ body:not(.library-tag-Untagged) .untagged-show {
     height: 157px;
   }
 
+  @media (max-width: $max-sm) {
+    margin-bottom: 175px;
+  }
+
   @media (max-width: $max-xs) {
     height: 136px;
+  }
+}
+
+.welcome-marketing {
+  img.solo-image {
+    display: block;
+    margin: 1.5rem auto;
+    max-width: 800px;
+    width: 100%;
+  }
+
+  p.welcome {
+    margin-bottom: 1.5rem;
+  }
+
+  .carousel {
+    max-width: 800px;
+    margin: 1.5rem auto 2.5rem auto;
+
+    .carousel-indicators {
+      bottom: -30px;
+
+      li {
+        background-color: #333;
+        opacity: 0.5;
+        cursor: pointer;
+      }
+
+      li.active {
+        opacity: 1;
+      }
+    }
   }
 }
 
@@ -784,6 +819,14 @@ a.AJ:hover {
 #top-bar {
   background-color: #303030!important;
   border-bottom: 2px solid #1f1e1e;
+
+  .navbar-brand {
+    position: absolute;
+    font-size: 3rem;
+    top: -8px;
+    color: #F5F5F5;
+    font-weight: 600;
+  }
 }
 
 li#navitem-logout a {

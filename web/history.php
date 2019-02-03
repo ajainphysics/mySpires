@@ -27,6 +27,10 @@ $user = mySpiresUser::info();
 
     <?php include "navbar.php"; // navbar ?>
 
+    <div class="busy-loader-wrapper">
+        <div class="loader busy-loader"></div>
+    </div>
+
     <div class="main-content">
 
         <div class="container">

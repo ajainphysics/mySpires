@@ -16,6 +16,8 @@ $(function () {
 mySpiresBin.load = function() {
     mySpiresBin.$loadMore.fadeOut();
 
+    let $busy_loader = $(".busy-loader").show();
+
     let range = (mySpiresBin.totalLoaded + 1) + "-" + (mySpiresBin.totalLoaded + mySpiresBin.chunks);
 
     return new Promise((resolve) => {
@@ -41,6 +43,7 @@ mySpiresBin.load = function() {
             if(mySpiresBin.totalLoaded < total)
                 mySpiresBin.$loadMore.fadeIn().css("display", "block");
 
+            $busy_loader.hide();
             resolve();
         });
     });

@@ -25,7 +25,7 @@ body {
   flex-grow: 1;
   border-bottom: 2px solid #c5c5c5;
   padding-top: 30px;
-  padding-bottom: 30px;
+  padding-bottom: 50px;
   overflow-x: hidden; }
 
 @media (min-width: 992px) {
@@ -371,8 +371,7 @@ body:not(.library-tag-Untagged) .untagged-show {
 
 .load-more-boxes {
   height: 40px;
-  margin-top: 10px;
-  margin-bottom: 50px; }
+  margin-top: 10px; }
   .load-more-boxes .btn {
     display: none;
     margin: 0 auto; }
@@ -385,9 +384,31 @@ body:not(.library-tag-Untagged) .untagged-show {
   @media (max-width: 991px) {
     .welcome-header {
       height: 157px; } }
+  @media (max-width: 767px) {
+    .welcome-header {
+      margin-bottom: 175px; } }
   @media (max-width: 575px) {
     .welcome-header {
       height: 136px; } }
+
+.welcome-marketing img.solo-image {
+  display: block;
+  margin: 1.5rem auto;
+  max-width: 800px;
+  width: 100%; }
+.welcome-marketing p.welcome {
+  margin-bottom: 1.5rem; }
+.welcome-marketing .carousel {
+  max-width: 800px;
+  margin: 1.5rem auto 2.5rem auto; }
+  .welcome-marketing .carousel .carousel-indicators {
+    bottom: -30px; }
+    .welcome-marketing .carousel .carousel-indicators li {
+      background-color: #333;
+      opacity: 0.5;
+      cursor: pointer; }
+    .welcome-marketing .carousel .carousel-indicators li.active {
+      opacity: 1; }
 
 .welcome-head {
   font-size: 400%;
@@ -504,6 +525,12 @@ a.AJ:hover {
 #top-bar {
   background-color: #303030 !important;
   border-bottom: 2px solid #1f1e1e; }
+  #top-bar .navbar-brand {
+    position: absolute;
+    font-size: 3rem;
+    top: -8px;
+    color: #F5F5F5;
+    font-weight: 600; }
 
 li#navitem-logout a {
   color: rgba(255, 100, 100, 0.75); }

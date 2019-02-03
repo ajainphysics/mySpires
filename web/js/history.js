@@ -16,6 +16,8 @@ $(function () {
 mySpiresHistory.load = function() {
     mySpiresHistory.$loadMore.fadeOut();
 
+    let $busy_loader = $(".busy-loader").show();
+
     let range = (mySpiresHistory.totalLoaded + 1) + "-" + (mySpiresHistory.totalLoaded + mySpiresHistory.chunks);
 
     return new Promise((resolve) => {
@@ -41,6 +43,7 @@ mySpiresHistory.load = function() {
             if(mySpiresHistory.totalLoaded < total)
                 mySpiresHistory.$loadMore.fadeIn().css("display", "block");
 
+            $busy_loader.hide();
             resolve();
         });
     });
