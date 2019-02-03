@@ -55,7 +55,7 @@ if (!mySpiresUser::current_username()) {
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="title-nav-collapse">
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto pt-2 pt-lg-0">
                         <li class="nav-item dropdown untagged-hide">
                             <a id="bibtexlink" class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"
                                aria-expanded="false">
@@ -85,6 +85,13 @@ if (!mySpiresUser::current_username()) {
                     </ul>
                 </div>
             </nav>
+
+            <div id="empty-library-message">
+                <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
+                <p class="introduction">
+                    Hey <?php echo $user->display_name; ?>! You have not added any records to your mySpires library yet. If you have the <a href="support.php#help-plugin">mySpires browser plugin</a> installed, you can add records on the go when you visit inspirehep.net or arxiv.org. Otherwise, head over to the <a href="/">Welcome</a> page to add some records manually. Find more information on the <a href="support.php#help-add">Support</a> page.
+                </p>
+            </div>
 
             <p id="tag-description"></p>
 
@@ -141,8 +148,6 @@ if (!mySpiresUser::current_username()) {
                 </div>
             </div>
         </div> <!-- /container -->
-
-        <!-- Bootstrap core JavaScript -->
 
     </div>
 

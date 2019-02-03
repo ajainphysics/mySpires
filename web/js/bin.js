@@ -16,12 +16,18 @@ $(function () {
 mySpiresBin.load = function() {
     mySpiresBin.$loadMore.fadeOut();
 
+    let $busy_loader = $(".busy-loader").show();
+
     let range = (mySpiresBin.totalLoaded + 1) + "-" + (mySpiresBin.totalLoaded + mySpiresBin.chunks);
 
     return new Promise((resolve) => {
         mySpires.bin(range).then(function(response) {
             let records = response.records,
-                total = response.total;
+                total = Number(response.total);
+
+            if(!total) {
+                $("#empty-message").show();
+            }
 
             console.log(records);
 
@@ -37,6 +43,7 @@ mySpiresBin.load = function() {
             if(mySpiresBin.totalLoaded < total)
                 mySpiresBin.$loadMore.fadeIn().css("display", "block");
 
+            $busy_loader.hide();
             resolve();
         });
     });

@@ -163,8 +163,11 @@ if($_GET["user"]) {
                         }
                         $current_id--;
                         ?>
-                        <tr id="record-<?php echo $record->id; ?>">
-                            <th scope="row"><?php echo $record->id; ?></th>
+                        <tr>
+                            <th scope="row">
+                                <div id="record-<?php echo $record->id; ?>" class="fake-anchor"></div>
+                                <?php echo $record->id; ?>
+                            </th>
                             <td><a href="//arxiv.org/abs/<?php echo $record->arxiv; ?>" target="_blank">
                                     <?php echo $record->arxiv; ?></a></td>
                             <td><a href="//inspirehep.net/record/<?php echo $record->inspire; ?>" target="_blank">
@@ -219,7 +222,7 @@ if($_GET["user"]) {
             <div class="panel-head"><h4>Database Backups</h4></div>
             <?php
             $latest_date = null;
-            $backups = array_filter(scandir(__DIR__ . "/database_backups/"), function ($a) {
+            $backups = array_filter(scandir(mySpires::content_root() . "/database_backups/"), function ($a) {
                 $e = explode("ajainphysics_", $a);
                 if (array_key_exists(1, $e)) return true;
                 else return false;

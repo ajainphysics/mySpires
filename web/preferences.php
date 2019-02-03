@@ -7,7 +7,7 @@ include_once "api/lib/mySpires.php";
 include_once "lib/functions.php";
 
 null_populate($_POST, [
-    "personal_details", "email", "first_name", "last_name",
+    "personal_details", "email", "first_name", "last_name", "history_status",
     "site_options", "inspire_query", "inspire_username",
     "linked_services", "no_dbx_reminder",
     "current-password", "new-password"
@@ -44,7 +44,8 @@ if($_POST["personal_details"]) {
 } elseif($_POST["site_options"]) {
     mySpiresUser::update_info(Array(
         "inspire_query" => $_POST["inspire_query"],
-        "inspire_username" => $_POST["inspire_username"]
+        "inspire_username" => $_POST["inspire_username"],
+        "history_enabled" => $_POST["history_status"]
     ), $control_username);
 
 } elseif($_POST["linked_services"]) {
@@ -97,6 +98,7 @@ $control_user = mySpiresUser::info($control_username);
                                value="<?php echo $control_user->inspire_query; ?>"
                                placeholder="find primarch hep-th">
                     </div>
+
                     <label for="inspire_username" class="col-md-3 col-form-label">INSPIRE Username</label>
                     <div class="col-md-9">
                         <input id="inspire_username" class="form-control" name="inspire_username"
@@ -104,6 +106,16 @@ $control_user = mySpiresUser::info($control_username);
                                placeholder="A.Jain.5">
                     </div>
                 </div>
+
+                <div class="form-group row">
+                    <label for="history_status" class="col-md-3 col-form-label">Enable History</label>
+                    <div class="col-md-9">
+                        <input type="checkbox" id="history_status" name="history_status" value="1"
+                        <?php if($control_user->history_enabled) echo "checked"; ?>>
+                        <label for="history_status">Keep an automatic record of the references you visit in your browser. Needs mySpires browser plugin to function.</label>
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <div class="offset-md-2 col-md-10">
                         <button class="btn btn-primary">Update</button>

@@ -265,7 +265,9 @@ class mySpires_Record
      * Records history for the record.
      */
     function history() {
-        if(!$this->loaded || !$this->username) return;
+        if(!$this->loaded || !$this->username) return; // Go back if not loaded or not logged in.
+
+        if(!mySpiresUser::info()->history_enabled) return; // If history is not enabled, return.
 
         mySpires::db_query("INSERT INTO history (username, id) VALUES ('{$this->username}', '{$this->id}') 
                                            ON DUPLICATE KEY UPDATE hits = hits + 1");

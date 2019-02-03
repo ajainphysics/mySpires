@@ -338,7 +338,7 @@ class mySa {
      */
     static private function database_backup() {
         // set the backup directory and filename
-        $dir = __DIR__ . "/../../database_backups/";
+        $dir = mySpires::content_root() . "/database_backups/";
         $file = $dir . "ajainphysics_" . date('Y-m-d') . ".sql";
 
         // If backup was already done, return
@@ -377,7 +377,7 @@ class mySa {
      */
     static private function sync_thumbnails()
     {
-        $thumbnails = scandir(__DIR__ . "/../../thumbnails/");
+        $thumbnails = scandir(mySpires::content_root() . "/thumbnails/");
         $db = mySpires::db();
 
         $results = $db->query("SELECT id, inspire, arxiv FROM records");
@@ -389,8 +389,8 @@ class mySa {
                 if($record->arxiv) $url = "https://arxiv.org/pdf/$record->arxiv.pdf";
                 else continue;
 
-                $tmp = __DIR__ . "/../../tmp/temp.pdf";
-                $filename = __DIR__ . "/../../thumbnails/$record->id.jpg";
+                $tmp = __DIR__ . "/../../.cache/thumb.pdf";
+                $filename = mySpires::content_root() . "/thumbnails/$record->id.jpg";
 
                 uploadfile($url, $tmp);
 

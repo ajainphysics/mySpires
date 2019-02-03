@@ -53,6 +53,18 @@ class mySpires
     /** @var mysqli $db Contains the active instance of the database. */
     static $db;
 
+    static function document_root() {
+        return $_SERVER["DOCUMENT_ROOT"];
+    }
+
+    static function content_root() {
+        return $_SERVER["DOCUMENT_ROOT"] . "/../cdn/myspires_content";
+    }
+
+    static function content_url() {
+        return "https://cdn.ajainphysics.com/myspires_content/";
+    }
+
     /**
      * Access mySpires MySQL database.
      * @return mysqli Returns an instance of the mySpires MySQL database object.
@@ -167,7 +179,7 @@ class mySpires
         $limit = "";
         if(property_exists($filters,"count")) $limit = " LIMIT {$filters->offset},{$filters->count}";
 
-        $results = self::db_query("SELECT id FROM entries WHERE username = '{$username}' AND bin=" . (int)$filters->bin . $limit);
+        $results = self::db_query("SELECT id FROM entries WHERE username = '{$username}' AND bin=" . (int)$filters->bin . " ORDER BY updated DESC" . $limit);
 
         $records = [];
         while ($entry = $results->fetch_object())
@@ -430,7 +442,7 @@ class mySpires
         $decorated_bibtex .= "%%% Last updated: " . date('Y-m-d H:i:s') . "\n\n";
         $decorated_bibtex .= $bibtex;
 
-        $saved_file_path = __DIR__ . "/../../bibtex/" . $filename;
+        $saved_file_path = mySpires::content_root() . "/bibtex/" . $filename;
         $saved_bibtex = file_get_contents($saved_file_path);
 
         $dropbox_upload = false;
@@ -442,6 +454,15 @@ class mySpires
         }
 
         return (object)["filename" => $filename, "contents" => $decorated_bibtex, "dropbox" => $dropbox_upload];
+    }
+
+    static function purge_history() {
+        $user = mySpiresUser::info();
+        if(!$user) return false;
+
+        mySpires::db_query("DELETE FROM history WHERE username = '{$user->username}'");
+
+        return true;
     }
 }
 

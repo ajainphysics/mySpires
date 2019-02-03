@@ -12,6 +12,8 @@ if (!mySpiresUser::current_username()) {
     header("Location: /");
     exit();
 }
+
+$user = mySpiresUser::info();
 ?>
 
 <!DOCTYPE html>
@@ -25,18 +27,51 @@ if (!mySpiresUser::current_username()) {
 
     <?php include "navbar.php"; // navbar ?>
 
+    <div class="busy-loader-wrapper">
+        <div class="loader busy-loader"></div>
+    </div>
+
     <div class="main-content">
 
         <div class="container">
 
             <?php webapp::display_alerts(); ?>
 
-            <div id="page-title" class="row main-title">
-                <div class="col-md-12">
+            <nav id="title-nav" class="navbar navbar-expand-lg navbar-light">
+                <div id="page-title" class="main-title">
                     <i id="parent-page-link" class="fa fa-history"></i>
                     <div id="title-wrapper"><h2>History</h2></div>
                 </div>
-            </div>
+
+                <button class="btn btn-outline-danger ml-auto purge-history-button" type="submit">Purge History</button>
+            </nav>
+
+            <?php if(!$user->history_enabled) { ?>
+                <div id="history-disabled">
+                    <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
+
+                    <p class="introduction">
+                        Hey <?php echo $user->display_name; ?>! History is currently disabled on your mySpires account. When enabled, the mySpires browser plugin will keep track of the references you visit. You can return here at any time to review your history and save the references that you found were helpful.
+                    </p>
+
+                    <button class="btn btn-success enable-history-button">Enable History</button>
+
+                    <p class="introduction">
+                        If you change your mind later, you can always go to preferences to disable history.
+                    </p>
+
+                    <p id="residual-history-message">
+                        The following activity was recorded before history was disabled. <a href="#" class="purge-history-button text-danger">Purge history</a>.
+                    </p>
+                </div>
+            <?php } else { ?>
+                <div id="empty-history-message">
+                    <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
+                    <p class="introduction">
+                        Hey <?php echo $user->display_name; ?>! You currently have nothing in your mySpires history. Install the mySpires browser plugin from <a href="support.php#help-plugin">here</a> if you haven't already and visit some references to start recording.
+                    </p>
+                </div>
+            <?php } ?>
 
             <div class="row paper-boxes">
                 <div class="col-sm-12">
@@ -44,40 +79,9 @@ if (!mySpiresUser::current_username()) {
                 </div>
             </div>
 
-            <div id="history-load-more">
+            <div class="load-more-boxes">
                 <button type="button" class="btn btn-outline-secondary">Load More</button>
             </div>
-
-            <!--
-
-            <?php
-            $sectionLabels = Array("today", "yesterday", "this_week", "this_month");
-            $sectionNames = Array("Today", "Yesterday", "This Week", "This Month");
-
-            $str = date("F");
-            for ($i = 1; $i <= 12; $i++) {
-                $str = $str . " last month";
-                array_push($sectionLabels, "previous_month_" . $i);
-                array_push($sectionNames, Date("F Y", strtotime($str)));
-            }
-
-            foreach ($sectionLabels as $key => $label) { ?>
-                <div id="section-<?php echo $label; ?>"
-                     class="row paper-boxes history-section">
-                    <div class="col-sm-12">
-                        <div class="paper-spinner-wrapper">
-                            <i class='fa fa-spinner fa-spin' aria-hidden='true'></i>
-                        </div>
-                        <div id="title-<?php echo $label; ?>" class="type-header history-title">
-                            <i class='openable-arrow fa fa-angle-double-down' aria-hidden='true'></i>
-                            <h3><?php echo $sectionNames[$key]; ?></h3>
-                        </div>
-                    </div>
-                </div>
-            <?php } ?>
-
-            -->
-
 
         </div> <!-- /container -->
 

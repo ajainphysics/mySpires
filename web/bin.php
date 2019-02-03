@@ -25,6 +25,10 @@ if (!mySpiresUser::current_username()) {
 
     <?php include "navbar.php"; // navbar ?>
 
+    <div class="busy-loader-wrapper">
+        <div class="loader busy-loader"></div>
+    </div>
+
     <div class="main-content">
 
         <div class="container">
@@ -38,6 +42,13 @@ if (!mySpiresUser::current_username()) {
                 </div>
             </div>
 
+            <div id="empty-message">
+                <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
+                <p class="introduction">
+                    Your bin is empty! When you delete a record from your library, it will show up here.
+                </p>
+            </div>
+
             <div class="row paper-boxes">
                 <div class="col-sm-12">
                     <div class="paper-spinner-wrapper"><i class='fa fa-spinner fa-spin' aria-hidden='true'></i></div>
@@ -45,7 +56,7 @@ if (!mySpiresUser::current_username()) {
             </div>
 
             <div class="load-more-boxes">
-                <button type="button" class="btn btn-outline-secondary">Load More</button>
+                <button type="button" class="btn btn-outline-secondary mx-auto">Load More</button>
             </div>
 
         </div> <!-- /container -->
