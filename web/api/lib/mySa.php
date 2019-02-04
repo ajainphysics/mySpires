@@ -421,13 +421,21 @@ class mySa {
 
         $synced = [];
         foreach($users as $username) {
-            if(mySpires::bibtex($username)->dropbox) {
+            if(mySpires::bib($username)->dropbox) {
                 array_push($synced, $username);
             };
         }
 
         if(sizeof($synced) > 0)
             self::log("BibTeX uploaded to Dropbox for " . sizeof($synced) . " users: " . implode(", ", $synced) . ".");
+
+        $results = mySpires::db_query("SELECT collaboration FROM collaborations");
+
+        while($result = $results->fetch_object()) {
+            mySpires::bib($result->collaboration, "collaboration");
+        }
+
+        self::log("BibTeX synced for collaborations.");
     }
 
     /**

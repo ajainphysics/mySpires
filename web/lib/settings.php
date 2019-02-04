@@ -20,17 +20,18 @@ $SITEOPTIONS["webRoot"] = "https://myspires.ajainphysics.com/";
 define('webRoot', 'https://myspires.ajainphysics.com/');
 
 $SITEOPTIONS["pages"] = Array(
-    "index"       => Array("name" => "Welcome",     "path" => ".",               "auth" => 0),
-    "library"     => Array("name" => "Library",     "path" => "library.php",     "auth" => 1),
-    "cite"        => Array("name" => "Author Citations",     "path" => "cite.php",     "auth" => 1),
-    "history"     => Array("name" => "History",     "path" => "history.php",     "auth" => 1),
-    "preferences" => Array("name" => "Preferences", "path" => "preferences.php", "auth" => 1),
-    "bin"         => Array("name" => "Bin",         "path" => "bin.php",          "auth" => 1),
-    "support"     => Array("name" => "Support",     "path" => "#",               "auth" => 0),
-    "logout"      => Array("name" => "Sign Out",    "path" => ".?logout=1",      "auth" => 1),
-    "login"       => Array("name" => "Sign In",     "path" => ".",               "auth" => -1),
-    "share"       => Array("name" => "Share",       "path" => "share.php",       "auth" => -1),
-    "admin"       => Array("name" => "Admin Panel", "path" => "admin.php",       "auth" => 1)
+    "index"          => ["name" => "Welcome",     "path" => ".",               "auth" => 0],
+    "library"        => ["name" => "Library",     "path" => "library.php",     "auth" => 1],
+    "cite"           => ["name" => "Author Citations",     "path" => "cite.php",     "auth" => 1],
+    "history"        => ["name" => "History",     "path" => "history.php",     "auth" => 1],
+    "preferences"    => ["name" => "Preferences", "path" => "preferences.php", "auth" => 1],
+    "bin"            => ["name" => "Bin",         "path" => "bin.php",          "auth" => 1],
+    "support"        => ["name" => "Support",     "path" => "#",               "auth" => 0],
+    "logout"         => ["name" => "Sign Out",    "path" => ".?logout=1",      "auth" => 1],
+    "login"          => ["name" => "Sign In",     "path" => ".",               "auth" => -1],
+    "share"          => ["name" => "Share",       "path" => "share.php",       "auth" => -1],
+    "admin"          => ["name" => "Admin Panel", "path" => "admin.php",       "auth" => 1],
+    "collaborations" => ["name" => "Collaborations", "path" => "collaborations.php",       "auth" => -1]
 );
 
 $SITEOPTIONS["dependencies"] = "remote";

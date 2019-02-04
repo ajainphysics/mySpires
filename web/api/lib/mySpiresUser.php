@@ -283,6 +283,8 @@ class mySpiresUser {
     }
 
     static function email_to_username($email) {
+        if(self::username_exists($email)) return $email;
+
         if ($query = mySpires::db()->prepare("SELECT username FROM users WHERE email = ?")) {
             $query->bind_param('s', $email);
             $query->execute();    // Execute the prepared query.

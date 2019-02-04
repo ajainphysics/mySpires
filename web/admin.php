@@ -80,41 +80,38 @@ if($_GET["user"]) {
                 </table>
             </div>
 
-            <div class="panel-head"><h4>Database Stats</h4></div>
             <?php
             $records = mySpires::db_query("SELECT count(*) AS total FROM records");
-            $total_records = $records->fetch_assoc()["total"];
 
             $users = mySpires::db_query("SELECT * FROM users ORDER BY last_seen DESC");
-            $user_stats = Array();
-            $total_entries = 0;
+            $user_stats = [];
             while ($user = $users->fetch_object()) {
-                $records = mySpires::db_query("SELECT count(*) AS total FROM entries WHERE username='{$user->username}'");
-                $stats = (object)Array();
+                $stats = $user;
+
+                $records = mySpires::db_query("SELECT count(*) AS total FROM entries WHERE username='{$user->username}' AND bin = 0");
                 $stats->entries = $records->fetch_assoc()["total"];
-                $total_entries += $stats->entries;
 
-                $stats->last_seen = $user->last_seen;
-                $stats->plugin_version = $user->plugin_version;
-
-                if($user->dbxtoken) $stats->dbx = true;
-                else $stats->dbx = false;
+                $records = mySpires::db_query("SELECT count(*) AS total FROM entries WHERE username='{$user->username}' AND bin = 1");
+                $stats->bin = $records->fetch_assoc()["total"];
 
                 $user_stats[$user->username] = $stats;
             }
 
-            echo "Total {$total_records} records and {$total_entries} entries found.";
-
             ?>
+            <div class="panel-head"><h4>User Stats</h4></div>
+
             <div id="user-stats-wrapper" class="stat-table">
                 <table class="table table-striped table-sm">
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col"></th>
-                        <th scope="col">Entries</th>
-                        <th scope="col">Last Seen</th>
-                        <th scope="col">Version</th>
-                        <th scope="col">Dropbox</th>
+                        <th scope="col" class="text-center"><i class="fas fa-hdd"></i></th>
+                        <th scope="col" class="text-center"><i class="fas fa-sign-in-alt"></i></th>
+                        <th scope="col" class="text-center"><i class="fab fa-chrome"></i></th>
+                        <th scope="col" class="text-center"><i class="fab fa-dropbox"></i></th>
+                        <th scope="col" class="text-center"><i class="fas fa-history"></i></th>
+                        <th scope="col" class="text-center"><i class="fas fa-user"></i></th>
+                        <th scope="col" class="text-center"><i class="fas fa-at"></i></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -122,11 +119,23 @@ if($_GET["user"]) {
                     foreach ($user_stats as $username => $stats) { ?>
                         <tr>
                             <th scope="row"><a href="preferences.php?user=<?php echo $username; ?>"><?php echo $username; ?></a></th>
-                            <td><?php echo $stats->entries; ?></td>
-                            <td><?php echo pretty_date_format($stats->last_seen); ?></td>
-                            <td><?php echo $stats->plugin_version; ?></td>
-                            <td><?php if($stats->dbx) echo "Yes"; ?> </td>
-
+                            <td class="text-center">
+                                <?php
+                                echo $stats->entries;
+                                if($stats->bin)  echo " (+" . $stats->bin . ")";
+                                ?>
+                            </td>
+                            <td class="text-center"><?php echo pretty_date_format($stats->last_seen); ?></td>
+                            <td class="text-center"><?php echo $stats->plugin_version; ?></td>
+                            <td class="text-center">
+                                <?php
+                                if($stats->dbxtoken) echo "<i class='fas fa-thumbs-up'></i>";
+                                elseif(!$stats->dbx_reminder) echo "<i class='fas fa-thumbs-down text-secondary'></i>";
+                                ?>
+                            </td>
+                            <td class="text-center"><?php if($stats->history_enabled) echo "<i class='fas fa-thumbs-up'></i>"; ?> </td>
+                            <td class="text-center"><?php echo $stats->first_name . " " . $stats->last_name; ?></td>
+                            <td class="text-center"><?php echo $stats->email; ?></td>
                         </tr>
                     <? }
                     ?>
@@ -259,6 +268,8 @@ if($_GET["user"]) {
 <?php
 
 function pretty_date_format($date) {
+    if(!$date) return "";
+
     if(is_string($date)) $date = strtotime($date);
 
     switch(floor((time() - $date)/(60*60*24))) {

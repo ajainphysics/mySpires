@@ -7,6 +7,16 @@ $min-lg: 992px;
 $max-lg: 1199px;
 $min-xl: 1120px;
 
+$light: #F5F5F5;
+$dark: #333;
+$light-outline: #c5c5c5;
+
+$context-primary: #007bff;
+$context-success: #28a745;
+$context-warning: #ffc107;
+$context-danger: #dc3545;
+$context-secondary: #6c757d;
+
 html {
   height: 100%;
   min-height: 100%;
@@ -1181,4 +1191,48 @@ label.label-required::after {
 p.introduction {
   font-size: 1.2rem;
   text-align: justify;
+}
+
+.collaboration-box {
+  border: 1px solid $light-outline;
+  border-radius: 5px;
+  background-color: #FFF;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .collaborator-box {
+    &.collaborator-active {
+      border-left: 5px solid $context-primary;
+    }
+    &.collaborator-pending {
+      border-left: 5px solid $context-warning;
+    }
+    &.collaborator-suggested {
+      border-left: 5px solid $context-secondary;
+    }
+
+    border-radius: 5px;
+
+    margin-left: 1rem;
+    padding-left: 0.5rem;
+    margin-bottom: 1rem;
+
+    .name {
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+
+    .details {
+      font-size: 85%;
+      margin-bottom: 0;
+
+      .sep {
+        color: $light-outline;
+      }
+    }
+  }
 }
