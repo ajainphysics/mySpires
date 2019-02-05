@@ -11,23 +11,18 @@ $opts = $opts->dropbox;
 
 $redirect = $_GET["redirect"];
 
-$username = mySpiresUser::current_username();
+if(array_key_exists("user", $_GET) && $_GET["user"]) $control_user = new mySpires_User($_GET["user"]);
+else $control_user = mySpires::user();
 
-if(array_key_exists("user", $_GET))
-    $control_username = $_GET["user"];
-else
-    $control_username = $username;
 
-if(!mySpiresUser::auth($control_username)) {
-    header("Location: " . webRoot);
-}
+if(!$control_user->auth()) header("Location: " . webRoot);
 
 if($_GET["unlink"] == 1) {
-    mySpiresUser::dropbox($control_username)->unlink();
+    $control_user->dropbox()->unlink();
     header("Location: ".$redirect);
 
 } elseif($_GET["no_reminder"] == 1) {
-    mySpiresUser::update_info(Array("dbx_reminder" => 0), $control_username);
+    $control_user->update_info(["dbx_reminder" => 0]);
     echo 1;
 
 } elseif($code = $_GET["code"]) {
@@ -35,7 +30,7 @@ if($_GET["unlink"] == 1) {
     $control_username = $e[0];
     $redirect = $e[1];
 
-    $dbx = mySpiresUser::dropbox($control_username, $code);
+    $dbx = (new mySpires_User($control_username))->dropbox($code);
     header("Location: ". $redirect);
 
 } else {
@@ -43,7 +38,7 @@ if($_GET["unlink"] == 1) {
         "response_type" => "code",
         "client_id"     => $opts->key,
         "redirect_uri"  => mySpires::$server . "api/dbxauth.php",
-        "state"         => $control_username . "@@@" . $redirect
+        "state"         => $control_user->username . "@@@" . $redirect
     );
     $authURL = "https://www.dropbox.com/oauth2/authorize?" . http_build_query($data);
     header("Location: " . $authURL);

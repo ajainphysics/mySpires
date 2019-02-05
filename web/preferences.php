@@ -13,55 +13,55 @@ null_populate($_POST, [
     "current-password", "new-password"
 ]);
 
+null_populate($_GET, ["user"]);
+
 define("pageLabel", "preferences");
 
-$username = mySpiresUser::current_username();
-
-if (!$username) {
+if (!mySpires::user()) {
     header("Location: " . webRoot);
     exit();
 }
 
-if(array_key_exists("user", $_GET))
-    $control_username = $_GET["user"];
-else
-    $control_username = $username;
+if($_GET["user"]) $control_user = new mySpires_User($_GET["user"]);
+else $control_user = mySpires::user();
 
-if(!mySpiresUser::auth($control_username)) {
-    header("Location: preferences.php");
-}
+if(!$control_user->auth()) header("Location: preferences.php");
 
 $current_password = $_POST["current-password"];
 $new_password = $_POST["new-password"];
 
 if($_POST["personal_details"]) {
-    mySpiresUser::update_info(Array(
+    $control_user->update_info([
         "email" => $_POST["email"],
         "first_name" => $_POST["first_name"],
         "last_name" => $_POST["last_name"]
-    ), $control_username);
+    ]);
 
 } elseif($_POST["site_options"]) {
-    mySpiresUser::update_info(Array(
+    $control_user->update_info([
         "inspire_query" => $_POST["inspire_query"],
         "inspire_username" => $_POST["inspire_username"],
         "history_enabled" => $_POST["history_status"]
-    ), $control_username);
+    ]);
 
 } elseif($_POST["linked_services"]) {
     if($_POST["no_dbx_reminder"]) $dbx_reminder = 0;
     else $dbx_reminder = 1;
-    mySpiresUser::update_info(Array("dbx_reminder" => $dbx_reminder), $control_username);
+    $control_user->update_info(["dbx_reminder" => $dbx_reminder]);
 
 } elseif ($new_password) {
-    if (mySpiresUser::change_password($control_username, $current_password, $new_password)) {
+    $success = false;
+    if(mySpires::admin())
+        $success = $control_user->set_password($new_password);
+    else
+        $success = $control_user->change_password($current_password, $new_password);
+
+    if ($success) {
         webapp::alert("Password Updated.", "success", 5000);
     } else {
         webapp::alert("Authentication Error! Could not update password.", "danger", 5000);
     }
 }
-
-$control_user = mySpiresUser::info($control_username);
 
 ?>
 
@@ -84,7 +84,7 @@ $control_user = mySpiresUser::info($control_username);
                 <div class="col-md-12">
                     <i id="parent-page-link" class="fa fa-cogs"></i>
                     <h2>Preferences
-                        <?php if($control_username !=  $username) echo "for " . $control_user->name . " ("  . $control_username .  ")"; ?> </h2>
+                        <?php if($control_user->username !=  mySpires::username()) echo "for " . $control_user->name . " ("  . $control_user->username .  ")"; ?> </h2>
                 </div>
             </div>
 
@@ -95,14 +95,14 @@ $control_user = mySpiresUser::info($control_username);
                     <label for="inspire_query" class="col-md-3 col-form-label">Default INSPIRE Query</label>
                     <div class="col-md-9">
                         <input id="inspire_query" class="form-control" name="inspire_query"
-                               value="<?php echo $control_user->inspire_query; ?>"
+                               value="<?php echo $control_user->info->inspire_query; ?>"
                                placeholder="find primarch hep-th">
                     </div>
 
                     <label for="inspire_username" class="col-md-3 col-form-label">INSPIRE Username</label>
                     <div class="col-md-9">
                         <input id="inspire_username" class="form-control" name="inspire_username"
-                               value="<?php echo $control_user->inspire_username; ?>"
+                               value="<?php echo $control_user->info->inspire_username; ?>"
                                placeholder="A.Jain.5">
                     </div>
                 </div>
@@ -111,7 +111,7 @@ $control_user = mySpiresUser::info($control_username);
                     <label for="history_status" class="col-md-3 col-form-label">Enable History</label>
                     <div class="col-md-9">
                         <input type="checkbox" id="history_status" name="history_status" value="1"
-                        <?php if($control_user->history_enabled) echo "checked"; ?>>
+                        <?php if($control_user->info->history_enabled) echo "checked"; ?>>
                         <label for="history_status">Keep an automatic record of the references you visit in your browser. Needs mySpires browser plugin to function.</label>
                     </div>
                 </div>
@@ -136,23 +136,23 @@ $control_user = mySpiresUser::info($control_username);
                     <label class="col-md-3 col-form-label">Dropbox</label>
                     <div class="col-md-9">
                         <?php
-                        $url = urlencode(mySpires::$server . "preferences.php?user=" . $control_username);
-                        $dbx = mySpiresUser::dropbox($control_username);
+                        $url = urlencode(mySpires::$server . "preferences.php?user=" . $control_user->username);
+                        $dbx = $control_user->dropbox();
                         $dbxuser = $dbx->user();
                         if($dbxuser) { ?>
                             <div class="form-noinput">
                                 <img class="dbxthumb" src="<?php echo $dbxuser->profile_photo_url; ?>">
                                 <?php echo $dbxuser->name->display_name; ?>
-                                (<a href="api/dbxauth.php?user=<?php echo $control_username; ?>&unlink=1&redirect=<?php echo $url; ?>">Unlink</a>)
+                                (<a href="api/dbxauth.php?user=<?php echo $control_user->username; ?>&unlink=1&redirect=<?php echo $url; ?>">Unlink</a>)
                             </div>
                         <?php } else { ?>
                             <div class="form-noinput">
-                                <a href="api/dbxauth.php?user=<?php echo $control_username; ?>&redirect=<?php echo $url; ?>">Link</a>
+                                <a href="api/dbxauth.php?user=<?php echo $control_user->username; ?>&redirect=<?php echo $url; ?>">Link</a>
 
                                 <label class="form-check-label" style="margin-left: 10px">
                                     <input class="form-check-input" type="checkbox" id="no_dbx_reminder"
                                            name="no_dbx_reminder" value="1" style="margin-top: 5px; position: absolute;"
-                                           <?php if(!$control_user->dbx_reminder) echo "checked"; ?>>
+                                           <?php if(!$control_user->info->dbx_reminder) echo "checked"; ?>>
                                     Do not remind me.
                                 </label>
                             </div>
@@ -189,13 +189,13 @@ $control_user = mySpiresUser::info($control_username);
                     <label for="first_name" class="col-md-3 col-form-label">First Name</label>
                     <div class="col-md-9">
                         <input id="first_name" class="form-control" name="first_name" placeholder="First Name"
-                               value="<?php echo $control_user->first_name; ?>">
+                               value="<?php echo $control_user->info->first_name; ?>">
                     </div>
 
                     <label for="last_name" class="col-md-3 col-form-label">Last Name</label>
                     <div class="col-md-9">
                         <input id="last_name" class="form-control" name="last_name" placeholder="Last Name"
-                               value="<?php echo $control_user->last_name; ?>">
+                               value="<?php echo $control_user->info->last_name; ?>">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -208,7 +208,7 @@ $control_user = mySpiresUser::info($control_username);
             <form method="post">
                 <h3 class="settings-section"><i class="fa fa-key"></i> Password</h3>
                 <div class="form-group row">
-                    <?php if(!mySpiresUser::auth()) { ?>
+                    <?php if(!mySpires::admin()) { ?>
                     <label for="current-password" class="col-md-3 col-form-label">Current Password</label>
                     <div class="col-md-9">
                         <input id="current-password" type="password" class="form-control" name="current-password"

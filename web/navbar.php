@@ -1,4 +1,6 @@
-<?php $user = mySpiresUser::info(); ?>
+<?php
+$user = mySpires::user();
+?>
 
 <nav id="top-bar" class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
     <div class="container"> <!-- Navbar Container -->
@@ -16,7 +18,6 @@
         <div class="collapse navbar-collapse" id="top-bar-collapse">
             <ul class="navbar-nav ml-auto pt-3 pt-lg-0">
                 <?php
-                $user = mySpiresUser::info();
                 foreach(Array("index", "library", "history") as $label) {
                     $page = $SITEOPTIONS["pages"][$label];
                     if($page["auth"] == 0 || ($page["auth"] == 1 && isset($user))
@@ -34,10 +35,10 @@
                         <a class="nav-link" href="/" data-homenavigation="true">Login</a>
                     </li>
                     <li class="nav-item <?php if(pageLabel == "register") echo "active"; ?>">
-                        <a class="nav-link" href="/register.php" data-homenavigation="true">Register</a>
+                        <a class="nav-link" href="register.php" data-homenavigation="true">Register</a>
                     </li>
                     <li class="nav-item <?php if(pageLabel == "support") echo "active"; ?>">
-                        <a class="nav-link" href="/support.php" data-homenavigation="true">Support</a>
+                        <a class="nav-link" href="support.php" data-homenavigation="true">Support</a>
                     </li>
                 <?php } ?>
 
@@ -57,7 +58,7 @@
                             <b><?php echo $user->name; ?></b>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bibtexlink">
-                            <?php if(mySpiresUser::auth()) { ?>
+                            <?php if(mySpires::admin()) { ?>
                                 <a class="dropdown-item" href="admin.php" data-homenavigation="true">
                                     <i class="fa fa-user-secret"></i> Admin Panel</a>
                             <?php } ?>

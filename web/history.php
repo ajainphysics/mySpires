@@ -8,12 +8,11 @@ include_once "lib/functions.php";
 
 define("pageLabel", "history");
 
-if (!mySpiresUser::current_username()) {
+if (!mySpires::username()) {
     header("Location: /");
     exit();
 }
 
-$user = mySpiresUser::info();
 ?>
 
 <!DOCTYPE html>
@@ -46,12 +45,12 @@ $user = mySpiresUser::info();
                 <button class="btn btn-outline-danger ml-auto purge-history-button" type="submit">Purge History</button>
             </nav>
 
-            <?php if(!$user->history_enabled) { ?>
+            <?php if(!mySpires::user()->info->history_enabled) { ?>
                 <div id="history-disabled">
                     <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
 
                     <p class="introduction">
-                        Hey <?php echo $user->display_name; ?>! History is currently disabled on your mySpires account. When enabled, the mySpires browser plugin will keep track of the references you visit. You can return here at any time to review your history and save the references that you found were helpful.
+                        Hey <?php echo mySpires::user()->display_name; ?>! History is currently disabled on your mySpires account. When enabled, the mySpires browser plugin will keep track of the references you visit. You can return here at any time to review your history and save the references that you found were helpful.
                     </p>
 
                     <button class="btn btn-success enable-history-button">Enable History</button>
@@ -68,7 +67,7 @@ $user = mySpiresUser::info();
                 <div id="empty-history-message">
                     <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
                     <p class="introduction">
-                        Hey <?php echo $user->display_name; ?>! You currently have nothing in your mySpires history. Install the mySpires browser plugin from <a href="support.php#help-plugin">here</a> if you haven't already and visit some references to start recording.
+                        Hey <?php echo mySpires::user()->display_name; ?>! You currently have nothing in your mySpires history. Install the mySpires browser plugin from <a href="support.php#help-plugin">here</a> if you haven't already and visit some references to start recording.
                     </p>
                 </div>
             <?php } ?>

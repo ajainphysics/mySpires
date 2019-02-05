@@ -4,7 +4,7 @@ session_start();
 
 include_once "lib/settings.php";
 
-if(mySpiresUser::current_username()) {
+if(mySpires::user()) {
     header("Location: /");
 }
 
@@ -17,7 +17,7 @@ null_populate($_GET, ["forgot", "reset"]);
 if($_POST["registration"]) {
     $success = false; // If this is still false at the end, something went wrong.
     if(webapp::validate_recaptcha($_POST["g-recaptcha-response"])) {
-        $success = mySpiresUser::register((object)$_POST);
+        $success = mySpires::register((object)$_POST);
     }
 
     if($success) {
@@ -31,7 +31,7 @@ if($_POST["registration"]) {
 if($_POST["forgot-password"]) {
     $success = false;
     if(webapp::validate_recaptcha($_POST["g-recaptcha-response"])) {
-        $success = mySpiresUser::forgot_password($_POST["forgot-username"]);
+        $success = mySpires::forgot_password($_POST["forgot-username"]);
         // $success = mySpiresUser::register((object)$_POST);
     }
 
@@ -43,12 +43,13 @@ if($_POST["forgot-password"]) {
     }
 }
 
-if($_GET["reset"] && !mySpiresUser::check_reset_password_code($_GET["username"], $_GET["code"])) {
+if($_GET["reset"] && !(new mySpires_User($_GET["username"]))->check_code($_GET["code"])) {
     header("Location: /");
 }
 
 if($_POST["reset-password"]) {
-    $success = mySpiresUser::reset_password($_POST["username"], $_POST["code"], $_POST["password"]);
+    $user = new mySpires_User($_POST["username"]);
+    $success = $user->reset_password($_POST["code"], $_POST["password"]);
 
     if($success) {
         header("Location: /?source=password_reset_successful");

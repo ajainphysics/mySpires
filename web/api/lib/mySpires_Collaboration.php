@@ -3,25 +3,26 @@
 class mySpires_Collaboration {
     private $loaded = false;
 
-    public $collaboration;
+    public $cid;
     public $admin;
     public $name;
     public $collaborators = [];
     public $pending_collaborators = [];
     public $suggested_collaborators = [];
 
-    function __construct($collaboration) {
-        if(gettype($collaboration) === "string" || gettype($collaboration) === "integer") {
-            $this->collaboration = $collaboration;
+    function __construct($cid) {
+        if(gettype($cid) === "string" || gettype($cid) === "integer") {
+            $this->cid = $cid;
             $this->load();
         } else {
-            if(gettype($collaboration) === "array") $collaboration = (object)$collaboration;
+            $data = $cid;
+            if(gettype($data) === "array") $data = (object)$data;
 
-            if(!$collaboration->admin || !$collaboration->name || !mySpiresUser::username_exists($collaboration->admin))
+            if(!$data->admin || !$data->name || !mySpires::verify_username($data->admin))
                 return;
 
-            $this->name = preg_replace("/[^a-zA-Z0-9 \-]+/", "", $collaboration->name);
-            $this->admin = $collaboration->admin;
+            $this->name = preg_replace("/[^a-zA-Z0-9 \-]+/", "", $data->name);
+            $this->admin = $data->admin;
             array_push($this->collaborators, $this->admin);
 
             $this->loaded = true;
@@ -29,7 +30,7 @@ class mySpires_Collaboration {
     }
 
     private function load() {
-        $result = mySpires::db_query("SELECT * FROM collaborations WHERE collaboration = '{$this->collaboration}'");
+        $result = mySpires::db_query("SELECT * FROM collaborations WHERE cid = '{$this->cid}'");
         $data = $result->fetch_object();
 
         if(!$data) return false;
@@ -61,13 +62,13 @@ class mySpires_Collaboration {
         $pending_collaborators = implode(",", $this->pending_collaborators);
         $suggested_collaborators = implode(",", $this->suggested_collaborators);
 
-        if($this->collaboration) {
-            mySpires::db_query("UPDATE collaborations SET name = '{$this->name}', admin = '{$this->admin}', collaborators = '{$collaborators}', pending = '{$pending_collaborators}', suggested = '{$suggested_collaborators}' WHERE collaboration = {$this->collaboration}");
+        if($this->cid) {
+            mySpires::db_query("UPDATE collaborations SET name = '{$this->name}', admin = '{$this->admin}', collaborators = '{$collaborators}', pending = '{$pending_collaborators}', suggested = '{$suggested_collaborators}' WHERE cid = {$this->cid}");
         } else {
             mySpires::db_query("INSERT INTO collaborations (name, admin, collaborators, pending, suggested) 
                     VALUES ('{$this->name}', '{$this->admin}', '{$collaborators}', '{$pending_collaborators}', '{$suggested_collaborators}')");
 
-            $this->collaboration = mySpires::db()->insert_id;
+            $this->cid = mySpires::db()->insert_id;
         }
 
         return true;
@@ -87,8 +88,7 @@ class mySpires_Collaboration {
 
     function add_collaborator($username) {
         if(!$this->loaded) return false;
-        $username = mySpiresUser::email_to_username($username);
-        if(!$username) return false;
+        if(!mySpires::verify_username($username)) return false;
 
         if($this->collaborator_exists($username)) return true;
 
@@ -99,8 +99,7 @@ class mySpires_Collaboration {
 
     function approve_collaborator($username) {
         if(!$this->loaded) return false;
-        $username = mySpiresUser::email_to_username($username);
-        if(!$username) return false;
+        if(!mySpires::verify_username($username)) return false;
 
         if(!$this->remove_from_list($username, $this->suggested_collaborators)) return false;
         array_push($this->pending_collaborators, $username);
@@ -110,8 +109,7 @@ class mySpires_Collaboration {
 
     function accept_collaborator($username) {
         if(!$this->loaded) return false;
-        $username = mySpiresUser::email_to_username($username);
-        if(!$username) return false;
+        if(!mySpires::verify_username($username)) return false;
 
         if(!$this->remove_from_list($username, $this->pending_collaborators)) return false;
         array_push($this->collaborators, $username);

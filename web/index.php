@@ -6,7 +6,7 @@ null_populate($_POST, ["username", "password", "remember"]);
 null_populate($_GET, ["logout", "q", "source"]);
 
 if($_GET["logout"] == 1) {
-    mySpiresUser::logout();
+    mySpires::logout();
     header("Location: /");
 }
 
@@ -17,7 +17,7 @@ $password = $_POST["password"];
 if($_POST["remember"] == 1) $remember = true;
 else $remember = false;
 
-if($username && $password && !mySpiresUser::login($username, $password, $remember)) {
+if($username && $password && !mySpires::login($username, $password, $remember)) {
     $loginError = "Login Failed";
 }
 
@@ -29,7 +29,6 @@ if($_GET["source"] == "registration_successful") {
     webapp::alert("Your password has been reset. Please log in with your new credentials.", "success");
 }
 
-$userData = mySpiresUser::info();
 ?>
 
 <!DOCTYPE html>
@@ -43,14 +42,14 @@ $userData = mySpiresUser::info();
     
 <div class="main-wrapper">
 
-    <?php if(!isset($userData)) { ?>
+    <?php if(!mySpires::user()) { ?>
 
     <div class="welcome-header">
         <div class="container">
             <div class="row">
     
                 <h1 class="welcome-head col-md-7 col-lg-8">welcome to <br> <span class="head-myspires">mySpires.</span></h1>
-                    <form class="welcome-login col-md-5 col-lg-4" method="post">
+                    <form class="welcome-login col-md-5 col-lg-4" method="post" action="/">
                         <input id="username" class="form-control" name="username" placeholder="Username/Email">
                         <input id="password" type="password" class="form-control" name="password" placeholder="Password">
                         <button class="btn btn-primary float-right">Sign In</button>
@@ -75,9 +74,9 @@ $userData = mySpiresUser::info();
 
             <?php webapp::display_alerts(); ?>
 
-            <?php if(isset($userData)) {
+            <?php if(mySpires::user()) {
                 $q = $_GET["q"];
-                if(!$q) $q = $userData->inspire_query;
+                if(!$q) $q = mySpires::user()->info->inspire_query;
                 if(!$q) $q = "find primarch hep-th";
                 ?>
 

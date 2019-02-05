@@ -8,7 +8,7 @@ include_once "lib/functions.php";
 
 define("pageLabel", "bin");
 
-if (!mySpiresUser::current_username()) {
+if (!mySpires::user()) {
     header("Location: /");
     exit();
 }

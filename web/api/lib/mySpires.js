@@ -33,7 +33,6 @@ class mySpires {
                     this.user = data.user;
                     this.tagsinfo = data.tagsinfo;
                     this.taglist = Object.keys(this.tagsinfo);
-                    this.tagopts = data.tagopts;
                     resolve();
                 });
             });

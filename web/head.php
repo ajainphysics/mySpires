@@ -30,7 +30,8 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
 
     <?php
     $siteTitle = "mySpires";
-    if($user = mySpiresUser::info())
+    $user = mySpires::user();
+    if($user)
         $siteTitle = $SITEOPTIONS["pages"][pageLabel]["name"]." | mySpires - ".$user->name;
     ?>
     <title><?php echo $siteTitle; ?></title>
@@ -67,8 +68,8 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
 </head>
 
 <?php
-if($user = mySpiresUser::info()) {
-    if (!$user->dbxtoken && $user->dbx_reminder) {
+if($user = mySpires::user()) {
+    if (!$user->info->dbxtoken && $user->info->dbx_reminder) {
         $alert_id = webapp::alert(
             "You can now connect a Dropbox account to mySpires. mySpires will keep an updated <i>mySpires_"
             . $user->username . ".bib</i> file containing your entire database in Dropbox. Include this file in your texmf folder and keep your references on your fingertips.

@@ -15,11 +15,10 @@ class mySpires_Tag {
     private $subtags = [];
 
     public function __construct($tag, $username = null) {
-        if(!$username) $username = mySpiresUser::current_username();
-        if(mySpiresUser::username_exists($username)) $this->username = $username;
-        else return;
+        if(!mySpires::verify_username($username, true)) return;
+        $this->username = $username;
 
-        $tag = mySpiresTags::cleanup($tag);
+        $tag = mySpires::tag_cleanup($tag);
         $this->tag = $tag;
     }
 
@@ -30,11 +29,11 @@ class mySpires_Tag {
         $this->parents = [];
         $this->subtags = [];
 
-        $tag_records = mySpiresTags::tag_records($this->username);
-        $tag_list = array_keys($tag_records);
+        $tags_info = (new mySpires_User($this->username))->tags();
+        $tag_list = array_keys($tags_info);
 
-        if(array_key_exists($this->tag, $tag_records)) {
-            foreach ($tag_records[$this->tag] as $id) {
+        if(array_key_exists($this->tag, $tags_info)) {
+            foreach ($tags_info[$this->tag]->records as $id) {
                 $this->records[$id] = new mySpires_Record($id, "id", $this->username);
             }
         }
@@ -81,9 +80,9 @@ class mySpires_Tag {
     public function rename($new_tag) {
         $this->prepare();
 
-        $new_tag = mySpiresTags::cleanup($new_tag);
+        $new_tag = mySpires::tag_cleanup($new_tag);
 
-        if(mySpiresTags::exists($new_tag, $this->username))
+        if(array_key_exists($new_tag, (new mySpires_User($this->username))->tags()))
             return false;
 
         foreach($this->records as $record) {

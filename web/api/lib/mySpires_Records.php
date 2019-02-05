@@ -20,7 +20,6 @@ class mySpires_Records
         } elseif ($rtype == "string") {
             if(!$field) $field = "id";
             if($field == "tag") $this->load_tag($query);
-            elseif($field == "timeframe") $this->load_timeframe($query);
             elseif($field == "history") $this->load_history($query);
             elseif($field == "bin") $this->load_bin($query);
             elseif($field == "search") {
@@ -89,7 +88,7 @@ class mySpires_Records
             $username = $e[0];
         }
 
-        if(!$username) $username = mySpiresUser::current_username();
+        if(!$username) $username = mySpires::username();
         if(!$username) return;
 
         // We first get all entries corresponding to a tag
@@ -125,7 +124,7 @@ class mySpires_Records
     }
 
     private function load_history($range) {
-        $username = mySpiresUser::current_username();
+        $username = mySpires::username();
         if (!$username) return;
 
         $x = explode("-",$range);
@@ -152,7 +151,7 @@ class mySpires_Records
     }
 
     private function load_bin($range) {
-        if (!mySpiresUser::current_username()) return;
+        if (!mySpires::user()) return;
 
         $x = explode("-",$range);
         $offset = $x[0] - 1;
@@ -162,55 +161,6 @@ class mySpires_Records
 
         $response = mySpires::find_entries(["bin" => true, "offset" => $offset, "count" => $chunk]);
         foreach($response as $raw) {
-            $this->{$raw->id} = new mySpires_Record($raw);
-        }
-    }
-
-    /**
-     * Loads record(s) from the database matching a time-frame from history.
-     * @param string $timeframe Time-frame to be loaded. Accepts "today", "yesterday", "this_week", "this_month",
-     *                          "previous_month_i". Note that the time-frames are exclusive, so a publication in
-     *                          "this_week" for example, will not load under "this_month".
-     */
-    private function load_timeframe($timeframe)
-    {
-        $username = mySpiresUser::current_username();
-        if(!$username) return;
-
-        // These are the MySQL filters for the dates of interest.
-        if (substr($timeframe, 0, 15) == 'previous_month_') {
-            $DateFilter = "DATE_FORMAT(DATE(updated), '%m-%Y') = DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL "
-                . substr($timeframe, 15) . " MONTH), '%m-%Y')"
-                . " AND YEARWEEK(DATE(updated), 1) != YEARWEEK(CURRENT_DATE, 1)"
-                . " AND DATE(updated) != DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
-        } elseif ($timeframe == "this_month") {
-            $DateFilter
-                = "DATE_FORMAT(DATE(updated), '%m-%Y') = DATE_FORMAT(CURRENT_DATE, '%m-%Y')"
-                . " AND YEARWEEK(DATE(updated), 1) != YEARWEEK(CURRENT_DATE, 1)"
-                . " AND DATE(updated) != DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
-        } elseif ($timeframe == "this_week") {
-            $DateFilter
-                = "YEARWEEK(DATE(updated), 1) = YEARWEEK(CURRENT_DATE, 1)"
-                . " AND DATE(updated) != CURRENT_DATE"
-                . " AND DATE(updated) != DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
-        } elseif ($timeframe == "yesterday") {
-            $DateFilter = "DATE(updated) = DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)";
-        } else {
-            $DateFilter = "DATE(updated) = CURRENT_DATE";
-        }
-
-        $results = mySpires::db_query("SELECT id, updated FROM history WHERE username = '{$username}' AND {$DateFilter}");
-
-        $idArray = [];
-        $historyDates = [];
-        while ($history = $results->fetch_object()) {
-            $historyDates[$history->id] = $history->updated;
-            $idArray[] = $history->id;
-        }
-
-        $response = mySpires::find_records(["id" => implode(",", $idArray)]);
-        foreach($response as $raw) {
-            if (!$raw->updated) $raw->updated = $historyDates[$raw->id];
             $this->{$raw->id} = new mySpires_Record($raw);
         }
     }

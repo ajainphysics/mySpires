@@ -6,7 +6,7 @@ null_populate($_POST, ["support-message"]);
 
 define("pageLabel", "support");
 
-$user = mySpiresUser::info();
+$user = mySpires::user();
 
 $post_message = false;
 if($_POST["support-message"]) {
@@ -60,7 +60,7 @@ if($_POST["support-message"]) {
 
             <?php if($user) { ?>
                 <p class="introduction">
-                    Hey <?php echo $user->first_name ?>! Thanks for using mySpires. You should find all the tips and tricks for using the platform on this page. If you find something missing in the documentation or would like to get in touch about new features or bugs, just drop me a line!
+                    Hey <?php echo $user->display_name ?>! Thanks for using mySpires. You should find all the tips and tricks for using the platform on this page. If you find something missing in the documentation or would like to get in touch about new features or bugs, just drop me a line!
                 </p>
 
                 <div class="help-toc list-group">

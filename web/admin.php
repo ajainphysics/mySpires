@@ -11,7 +11,7 @@ define("pageLabel", "admin");
 null_populate($_POST, ["clear_messages"]);
 null_populate($_GET, ["p", "user"]);
 
-if (!mySpiresUser::auth()) {
+if (!mySpires::admin()) {
     header("Location: " . webRoot);
     exit();
 }
@@ -231,7 +231,7 @@ if($_GET["user"]) {
             <div class="panel-head"><h4>Database Backups</h4></div>
             <?php
             $latest_date = null;
-            $backups = array_filter(scandir(mySpires::content_root() . "/database_backups/"), function ($a) {
+            $backups = array_filter(scandir(mySpires::$content_root . "/database_backups/"), function ($a) {
                 $e = explode("ajainphysics_", $a);
                 if (array_key_exists(1, $e)) return true;
                 else return false;

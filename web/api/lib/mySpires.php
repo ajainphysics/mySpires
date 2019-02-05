@@ -53,17 +53,11 @@ class mySpires
     /** @var mysqli $db Contains the active instance of the database. */
     static $db;
 
-    static function document_root() {
-        return $_SERVER["DOCUMENT_ROOT"];
-    }
+    static $server_root = "/home/kz0qr7otxolj";
+    static $document_root = "/home/kz0qr7otxolj/myspires";
+    static $content_root = "/home/kz0qr7otxolj/cdn/myspires_content";
 
-    static function content_root() {
-        return $_SERVER["DOCUMENT_ROOT"] . "/../cdn/myspires_content";
-    }
-
-    static function content_url() {
-        return "https://cdn.ajainphysics.com/myspires_content/";
-    }
+    static $content_url = "https://cdn.ajainphysics.com/myspires_content/";
 
     /**
      * Access mySpires MySQL database.
@@ -144,9 +138,9 @@ class mySpires
             }
         }
 
-        if(!$username) $username = mySpiresUser::current_username();
-        if(!mySpiresUser::username_exists($username)) $username = null;
-        // $username = mySpiresUser::current_username();
+        if(!$username) $username = mySpires::username();
+        else $username = (new mySpires_User($username, "username"))->username;
+
         if ($username && sizeof($records) > 0) {
             $id_list = implode(",", array_map(function ($id) {
                 return "'". trim($id) . "'";
@@ -170,7 +164,7 @@ class mySpires
 
         $records = [];
 
-        $username = mySpiresUser::current_username();
+        $username = mySpires::username();
         if(!$username) return $records;
 
         if(!property_exists($filters,"bin")) $filters->bin = false;
@@ -189,7 +183,7 @@ class mySpires
     }
 
     private static function queryentries($filters = "", $username = "") {
-        if(!$username) $username = mySpiresUser::current_username();
+        if(!$username) $username = mySpires::username();
         if(!$username) return null;
 
         $db = self::db(); // Load the database
@@ -231,7 +225,7 @@ class mySpires
      */
     static function taglist($tagsOnly = false, $username = "")
     {
-        if(!$username) $username = mySpiresUser::current_username();
+        if(!$username) $username = mySpires::username();
         if(!$username) return false;
 
         $db = self::db();
@@ -294,7 +288,7 @@ class mySpires
     }
 
     static function tagopts($username = "") {
-        if(!$username) $username = mySpiresUser::current_username();
+        if(!$username) $username = mySpires::username();
         if(!$username) return false;
 
         $db = self::db();
@@ -402,7 +396,7 @@ class mySpires
         elseif ($type = "user") {
             $user_list = [$query];
             $e = explode(":", $query);
-            $user = mySpiresUser::info($e[0]);
+            $user = new mySpires_User($e[0]);
 
             if(!$user) return null;
 
@@ -468,7 +462,7 @@ class mySpires
         $label_ = str_replace(" ", "-", $label_);
         $filename = $label_ . ".bib";
 
-        $saved_file_path = mySpires::content_root() . "/bibtex/" . $filename;
+        $saved_file_path = mySpires::$content_root . "/bibtex/" . $filename;
         if(file_exists($saved_file_path))
             $saved_bib = file_get_contents($saved_file_path);
         else
@@ -478,9 +472,9 @@ class mySpires
         if($bib != $saved_bib) {
             foreach($user_list as $user) {
                 $e = explode(":", trim($user));
-                $username = $e[0];
+                $user = new mySpires_User($e[0]);
 
-                if(mySpiresUser::dropbox($username)->upload($full_bib, "/bib/" . $filename)) {
+                if($user->dropbox()->upload($full_bib, "/bib/" . $filename)) {
                     file_put_contents($saved_file_path, $bib);
                     $dropbox_upload = true;
                 }
@@ -491,8 +485,8 @@ class mySpires
     }
 
     static function bibtex($username = null, $tag = null) {
-        if($username) $user = mySpiresUser::info($username);
-        else $user = $user = mySpiresUser::info();
+        if($username) $user = new mySpires_User($username);
+        else $user = $user = mySpires::user();
 
         if(!$user) return null;
         $username = $user->username;
@@ -503,19 +497,237 @@ class mySpires
     }
 
     static function purge_history() {
-        $user = mySpiresUser::info();
+        $user = mySpires::user();
         if(!$user) return false;
 
         mySpires::db_query("DELETE FROM history WHERE username = '{$user->username}'");
 
         return true;
     }
+
+    // User functions
+
+    private static $user;
+
+    /**
+     * Checks if a user is logged in and returns the username.
+     * @return mySpires_User User object if user is logged in, null otherwise
+     */
+    static function user() {
+        if(self::$user) return self::$user;
+
+        if (
+            !isset($_SESSION['user_id'], $_SESSION['login_string'])
+            && isset($_COOKIE['user_id'], $_COOKIE['login_string'])
+        ) {
+            $_SESSION["user_id"] = $_COOKIE["user_id"];
+            $_SESSION["login_string"] = $_COOKIE["login_string"];
+        }
+
+        // Check if all session variables are set
+        if (isset($_SESSION['user_id'], $_SESSION['login_string'])) {
+            $user = new mySpires_User($_SESSION['user_id'], "uid");
+
+            if ($user->info && hash_equals(hash('sha512', $user->info->hash), $_SESSION['login_string'])) {
+                $_SESSION['username'] = $user->username;
+                self::$user = $user; // logged in
+            }
+        }
+
+        return self::$user;
+    }
+
+    static function username() {
+        if(self::user())
+            return self::user()->username;
+        else
+            return null;
+    }
+
+    static function verify_username(&$username, $default = false) {
+        if($username) {
+            $username = (new mySpires_User($username))->username;
+            if($username) return true;
+        }
+        elseif($default) {
+            $username = self::username();
+            if($username) return true;
+        }
+        return false;
+    }
+
+    static function admin() {
+        $admins = json_decode(file_get_contents(__DIR__ . "/admins.json"));
+        return boolval(self::username() && in_array(self::username(), $admins)); // if admin, return true.
+    }
+
+    static function login($username, $password, $remember = false, $dev_login = false) {
+        $user = new mySpires_User($username);
+        if(!$dev_login && !$user->check_password($password)) return false;
+
+        if(!$user->info->enabled) return false;
+
+        $login_string = hash('sha512', $user->info->hash);
+
+        $_SESSION['user_id'] = $user->uid;
+        $_SESSION['username'] = $username;
+        $_SESSION['login_string'] = $login_string;
+
+        if ($remember) {
+            $expire_time = time() + 60 * 60 * 24 * 365;
+            /* Set cookie to last 1 year */
+            setcookie('user_id', $user->uid, $expire_time, self::$serverfolder, self::$serverdomain);
+            setcookie('login_string', $login_string, $expire_time, self::$serverfolder, self::$serverdomain);
+
+        } else {
+            $expire_time = time() - 7000000;
+            /* Cookie expires when browser closes */
+            setcookie('user_id', "", $expire_time, self::$serverfolder, self::$serverdomain);
+            setcookie('login_string', "", $expire_time, self::$serverfolder, self::$serverdomain);
+        }
+
+        return true;
+    }
+
+    static function logout()
+    {
+        session_start();
+        session_unset();
+
+        $expire_time = time() - 7000000;
+
+        setcookie(session_name(), '', $expire_time);
+        setcookie('user_id', '', $expire_time);
+        setcookie('login_string', '', $expire_time);
+
+        setcookie(session_name(), '', $expire_time, self::$serverfolder);
+        setcookie('user_id', '', $expire_time, self::$serverfolder);
+        setcookie('login_string', '', $expire_time, self::$serverfolder);
+
+        setcookie(session_name(), '', $expire_time, self::$serverfolder, self::$serverdomain);
+        setcookie('user_id', '', $expire_time, self::$serverfolder, self::$serverdomain);
+        setcookie('login_string', '', $expire_time, self::$serverfolder, self::$serverdomain);
+
+        session_destroy();
+
+        return true;
+    }
+
+    static function register($data) {
+        // transformations
+        $data->fname = trim($data->fname);
+        $data->lname = trim($data->lname);
+        $data->email = strtolower(trim($data->email));
+        $data->username = strtolower(preg_replace("/[^a-zA-Z0-9_\-]+/", "", trim($data->username)));
+
+        // specification checks
+        if(strlen($data->fname) == 0) return false;
+        if(!filter_var($data->email, FILTER_VALIDATE_EMAIL)) return false;
+        if(strlen($data->username) < 4) return false;
+        if(strlen($data->password) < 6) return false;
+
+        // already taken checks
+        if((new mySpires_User($data->email, "email"))->info) return false;
+        if((new mySpires_User($data->email, "username"))->info) return false;
+
+        if ($query = mySpires::db()->prepare("INSERT INTO users (username, email, first_name, last_name, enabled) VALUES (?, ?, ?, ?, 1)")) {
+            $query->bind_param('ssss', $data->username, $data->email, $data->fname, $data->lname);
+            if($query->execute()) {
+                $user = new mySpires_User($data->username);
+                $user->set_password($data->password);
+                mySa::message("New user registered: " . $data->username,1);
+                return true;
+            } else {
+                echo $query->error;
+            }
+        }
+
+        return false;
+    }
+
+    static function forgot_password($username) {
+        $user = new mySpires_User($username);
+        if(!$user->info) return false;
+
+        $config = include(__DIR__ . "/../../../.myspires_config.php");
+        $config = $config->server;
+
+        $subject = "[mySpires Support] Password Reset Request";
+
+        $msg = "Dear " . $user->display_name . ",\r\n\r\n";
+        $msg .= "A password reset request was initiated for your mySpires account. If you initiated this request, please follow this link to reset your password:\r\n\r\n";
+        $msg .= $config->path . "register.php?reset=1&username=". $user->username . "&code=" . $user->info->password . "\r\n\r\n";
+        $msg .= "If you did not initiate this request, you can ignore this email.\r\n\r\n";
+        $msg .= "Cheers,\r\n";
+        $msg .= "mySpires";
+
+        $headers = "From: mySpires <admin@ajainphysics.com>\r\n";
+        $headers .= "X-Mailer: PHP/" . phpversion();
+
+        mySa::message("Password reset request received for " . $user->username . ".", 1);
+
+        return mail($user->email, $subject, $msg, $headers);
+    }
+
+    /**
+     * Resets saved Dropbox token.
+     * @param string $username Username
+     */
+    static function dropbox_reset($username) {
+        $user = new mySpires_User($username);
+        $user->update_info(["dbxtoken" => NULL]);
+    }
+
+    static function user_list() {
+        if($query = mySpires::db()->prepare("SELECT username FROM users")) {
+            $query->execute();
+            $results = $query->get_result();
+
+            $users = [];
+            while($result = $results->fetch_object()) {
+                array_push($users, $result->username);
+            }
+
+            return $users;
+        }
+
+        return null;
+    }
+
+    // ============================== Tools ============================== //
+
+    static function surname($name) {
+        $e = explode(" ", trim($name));
+        return $e[sizeof($e) - 1];
+    }
+
+    static function tag_cleanup($tag) {
+        return preg_replace("/[,]+/", "", self::tag_list_cleanup($tag));
+    }
+
+    static function tag_list_cleanup($tag_list) {
+        $tag_list = preg_replace("/[^a-zA-Z0-9 ,\-\/]+/", "", $tag_list);
+
+        $tags = explode(",", $tag_list);
+        $tags = array_map(function($t) {
+            $e = explode("/", $t);
+            $e = array_map(function($tt) {
+                return implode(" ", array_filter(explode(" ", $tt)));
+            }, $e);
+            return implode("/", array_filter($e));
+        }, $tags);
+
+        $tags = array_unique(array_filter($tags));
+        sort($tags);
+
+        return implode(",", $tags);
+    }
 }
 
 include_once(__DIR__ . "/Dropbox.php");
+
 include_once(__DIR__ . "/mySpires_Record.php");
 include_once(__DIR__ . "/mySpires_Records.php");
 include_once(__DIR__ . "/mySpires_Tag.php");
-include_once(__DIR__ . "/mySpiresUser.php");
-include_once(__DIR__ . "/mySpiresTags.php");
+include_once(__DIR__ . "/mySpires_User.php");
 include_once(__DIR__ . "/mySpires_Collaboration.php");

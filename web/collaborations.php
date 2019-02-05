@@ -8,23 +8,21 @@ include_once "lib/functions.php";
 
 define("pageLabel", "collaborations");
 
-if (!mySpiresUser::current_username()) {
+if (!mySpires::user()) {
     header("Location: /");
     exit();
 }
 
-$user = mySpiresUser::info();
-
-$results = mySpires::db_query("SELECT collaboration FROM collaborations ORDER BY name");
+$results = mySpires::db_query("SELECT cid FROM collaborations ORDER BY name");
 $user_collaborations = [];
 $user_pending_collaborations = [];
 
 while($result = $results->fetch_object()) {
-    $collaboration = new mySpires_Collaboration($result->collaboration);
+    $collaboration = new mySpires_Collaboration($result->cid);
 
-    if(in_array($user->username, $collaboration->collaborators))
+    if(in_array(mySpires::user()->username, $collaboration->collaborators))
         array_push($user_collaborations, $collaboration);
-    elseif(in_array($user->username, $collaboration->pending_collaborators))
+    elseif(in_array(mySpires::user()->username, $collaboration->pending_collaborators))
         array_push($user_pending_collaborations, $collaboration);
 }
 
@@ -71,7 +69,7 @@ while($result = $results->fetch_object()) {
                             elseif(in_array($collaborator, $collaboration->suggested_collaborators))
                                 $status = "suggested";
 
-                            $collaborator = mySpiresUser::info($collaborator);
+                            $collaborator = new mySpires_User($collaborator);
                             ?>
                         <div class="collaborator-box collaborator-<?php echo $status ?>">
                             <p class="name"><?php echo $collaborator->name; ?></p>

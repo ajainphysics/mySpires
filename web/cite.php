@@ -18,15 +18,13 @@ define("pageLabel", "cite");
 
 $tag = $_GET["tag"];
 
-if (!mySpiresUser::current_username()) {
+if (!mySpires::username()) {
     header("Location: /");
     exit();
 }
 
-$userData = mySpiresUser::info();
-
 $a = $_GET["a"];
-if(!$a) $a = $userData->inspire_username;
+if(!$a) $a = mySpires::user()->info->inspire_username;
 if(!$a) $a = "Jain, Akash";
 ?>
 

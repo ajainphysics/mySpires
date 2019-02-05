@@ -12,7 +12,7 @@ null_populate($_GET, ["tag"]);
 
 $tag = $_GET["tag"];
 
-if (!mySpiresUser::current_username()) {
+if (!mySpires::user()) {
     header("Location: /");
     exit();
 }

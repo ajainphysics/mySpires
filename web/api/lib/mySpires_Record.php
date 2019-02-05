@@ -32,8 +32,7 @@ class mySpires_Record
      * @param string $username
      */
     function __construct($query = null, $field = null, $username = null) {
-        if(!$username) $username = mySpiresUser::current_username();
-        if(mySpiresUser::username_exists($username)) $this->username = $username;
+        if(mySpires::verify_username($username, true)) $this->username = $username;
 
         $qtype = gettype($query);
         if($qtype == "object") {
@@ -113,20 +112,20 @@ class mySpires_Record
     }
 
     public function add_tag($tag) {
-        $tag = mySpiresTags::cleanup($tag);
+        $tag = mySpires::tag_cleanup($tag);
         if(!$tag) return false;
 
         $this->tags .= "," . $tag;
-        $this->tags = mySpiresTags::cleanup_list($this->tags);
+        $this->tags = mySpires::tag_list_cleanup($this->tags);
 
         return true;
     }
 
     public function remove_tag($tag) {
-        $tag = mySpiresTags::cleanup($tag);
+        $tag = mySpires::tag_cleanup($tag);
         if(!$tag) return false;
 
-        $this->tags = mySpiresTags::cleanup_list($this->tags);
+        $this->tags = mySpires::tag_list_cleanup($this->tags);
 
         $tags = explode(",", $this->tags);
         $tags = array_filter($tags, function($t) use($tag) {
@@ -231,7 +230,7 @@ class mySpires_Record
         }
 
         if ($this->username) {
-            $this->tags = mySpiresTags::cleanup_list($this->tags);
+            $this->tags = mySpires::tag_list_cleanup($this->tags);
             $tags = "'" . $db->real_escape_string($this->tags) . "'";
             $comments = "'" . $db->real_escape_string($this->comments) . "'";
 
@@ -267,7 +266,7 @@ class mySpires_Record
     function history() {
         if(!$this->loaded || !$this->username) return; // Go back if not loaded or not logged in.
 
-        if(!mySpiresUser::info()->history_enabled) return; // If history is not enabled, return.
+        if(!mySpires::user()->info->history_enabled) return; // If history is not enabled, return.
 
         mySpires::db_query("INSERT INTO history (username, id) VALUES ('{$this->username}', '{$this->id}') 
                                            ON DUPLICATE KEY UPDATE hits = hits + 1");

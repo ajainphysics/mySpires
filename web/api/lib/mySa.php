@@ -317,7 +317,7 @@ class mySa {
         if (sizeof($backtrace) > 1) $sender = $backtrace[1]["function"] . "() @ " . $fileSegments[1] . ":" . $backtrace[0]["line"];
         else $sender = $fileSegments[1] . ":" . $backtrace[0]["line"];
 
-        $username = mySpiresUser::current_username();
+        $username = mySpires::username();
         if(!$username) $username = "anonymous";
 
         $sql = sprintf("INSERT INTO messages (username, sender, message, priority) VALUES ('%s', '%s', '%s', '%s')",
@@ -338,7 +338,7 @@ class mySa {
      */
     static private function database_backup() {
         // set the backup directory and filename
-        $dir = mySpires::content_root() . "/database_backups/";
+        $dir = mySpires::$content_root . "/database_backups/";
         $file = $dir . "ajainphysics_" . date('Y-m-d') . ".sql";
 
         // If backup was already done, return
@@ -377,7 +377,7 @@ class mySa {
      */
     static private function sync_thumbnails()
     {
-        $thumbnails = scandir(mySpires::content_root() . "/thumbnails/");
+        $thumbnails = scandir(mySpires::$content_root . "/thumbnails/");
         $db = mySpires::db();
 
         $results = $db->query("SELECT id, inspire, arxiv FROM records");
@@ -390,7 +390,7 @@ class mySa {
                 else continue;
 
                 $tmp = __DIR__ . "/../../.cache/thumb.pdf";
-                $filename = mySpires::content_root() . "/thumbnails/$record->id.jpg";
+                $filename = mySpires::$content_root . "/thumbnails/$record->id.jpg";
 
                 uploadfile($url, $tmp);
 
@@ -417,7 +417,7 @@ class mySa {
     }
 
     static private function sync_bibtex() {
-        $users = mySpiresUser::user_list();
+        $users = mySpires::user_list();
 
         $synced = [];
         foreach($users as $username) {
@@ -429,10 +429,10 @@ class mySa {
         if(sizeof($synced) > 0)
             self::log("BibTeX uploaded to Dropbox for " . sizeof($synced) . " users: " . implode(", ", $synced) . ".");
 
-        $results = mySpires::db_query("SELECT collaboration FROM collaborations");
+        $results = mySpires::db_query("SELECT cid FROM collaborations");
 
         while($result = $results->fetch_object()) {
-            mySpires::bib($result->collaboration, "collaboration");
+            mySpires::bib($result->cid, "collaboration");
         }
 
         self::log("BibTeX synced for collaborations.");
