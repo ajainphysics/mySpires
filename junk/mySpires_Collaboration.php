@@ -1,5 +1,7 @@
 <?php
 
+use function \mySpires\mysqli;
+
 class mySpires_Collaboration {
     private $loaded = false;
 
@@ -18,7 +20,7 @@ class mySpires_Collaboration {
             $data = $cid;
             if(gettype($data) === "array") $data = (object)$data;
 
-            if(!$data->admin || !$data->name || !mySpires::verify_username($data->admin))
+            if(!$data->admin || !$data->name || !\mySpires\users\verify($data->admin))
                 return;
 
             $this->name = preg_replace("/[^a-zA-Z0-9 \-]+/", "", $data->name);
@@ -30,7 +32,7 @@ class mySpires_Collaboration {
     }
 
     private function load() {
-        $result = mySpires::db_query("SELECT * FROM collaborations WHERE cid = '{$this->cid}'");
+        $result = \mySpires\query("SELECT * FROM collaborations WHERE cid = '{$this->cid}'");
         $data = $result->fetch_object();
 
         if(!$data) return false;
@@ -63,12 +65,12 @@ class mySpires_Collaboration {
         $suggested_collaborators = implode(",", $this->suggested_collaborators);
 
         if($this->cid) {
-            mySpires::db_query("UPDATE collaborations SET name = '{$this->name}', admin = '{$this->admin}', collaborators = '{$collaborators}', pending = '{$pending_collaborators}', suggested = '{$suggested_collaborators}' WHERE cid = {$this->cid}");
+            \mySpires\query("UPDATE collaborations SET name = '{$this->name}', admin = '{$this->admin}', collaborators = '{$collaborators}', pending = '{$pending_collaborators}', suggested = '{$suggested_collaborators}' WHERE cid = {$this->cid}");
         } else {
-            mySpires::db_query("INSERT INTO collaborations (name, admin, collaborators, pending, suggested) 
+            \mySpires\query("INSERT INTO collaborations (name, admin, collaborators, pending, suggested) 
                     VALUES ('{$this->name}', '{$this->admin}', '{$collaborators}', '{$pending_collaborators}', '{$suggested_collaborators}')");
 
-            $this->cid = mySpires::db()->insert_id;
+            $this->cid = mysqli()->insert_id;
         }
 
         return true;
@@ -88,7 +90,7 @@ class mySpires_Collaboration {
 
     function add_collaborator($username) {
         if(!$this->loaded) return false;
-        if(!mySpires::verify_username($username)) return false;
+        if(!\mySpires\users\verify($username)) return false;
 
         if($this->collaborator_exists($username)) return true;
 
@@ -99,7 +101,7 @@ class mySpires_Collaboration {
 
     function approve_collaborator($username) {
         if(!$this->loaded) return false;
-        if(!mySpires::verify_username($username)) return false;
+        if(!\mySpires\users\verify($username)) return false;
 
         if(!$this->remove_from_list($username, $this->suggested_collaborators)) return false;
         array_push($this->pending_collaborators, $username);
@@ -109,7 +111,7 @@ class mySpires_Collaboration {
 
     function accept_collaborator($username) {
         if(!$this->loaded) return false;
-        if(!mySpires::verify_username($username)) return false;
+        if(!\mySpires\users\verify($username)) return false;
 
         if(!$this->remove_from_list($username, $this->pending_collaborators)) return false;
         array_push($this->collaborators, $username);
@@ -122,6 +124,7 @@ class mySpires_Collaboration {
         $this->remove_from_list($username, $this->collaborators);
         $this->remove_from_list($username, $this->pending_collaborators);
         $this->remove_from_list($username, $this->suggested_collaborators);
+        return true;
     }
 
     private function remove_from_list($item, &$list) {

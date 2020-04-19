@@ -15,10 +15,10 @@ class mySpires_Tag {
     private $subtags = [];
 
     public function __construct($tag, $username = null) {
-        if(!mySpires::verify_username($username, true)) return;
+        if(!\mySpires\users\verify($username, true)) return;
         $this->username = $username;
 
-        $tag = mySpires::tag_cleanup($tag);
+        $tag = \mySpires\tags\cleanup($tag);
         $this->tag = $tag;
     }
 
@@ -80,7 +80,7 @@ class mySpires_Tag {
     public function rename($new_tag) {
         $this->prepare();
 
-        $new_tag = mySpires::tag_cleanup($new_tag);
+        $new_tag = \mySpires\tags\cleanup($new_tag);
 
         if(array_key_exists($new_tag, (new mySpires_User($this->username))->tags()))
             return false;
@@ -121,7 +121,7 @@ class mySpires_Tag {
     }
 
     private function properties() {
-        if($query = mySpires::db()->prepare("SELECT * FROM tags WHERE username = ? AND tag = ?")) {
+        if($query = \mySpires\mysqli()->prepare("SELECT * FROM tags WHERE username = ? AND tag = ?")) {
             $query->bind_param("ss", $this->username, $this->tag);
             $query->execute();
 
@@ -134,7 +134,7 @@ class mySpires_Tag {
     }
 
     private function delete_properties() {
-        if($query = mySpires::db()->prepare("DELETE FROM tags WHERE username = ? AND tag = ?")) {
+        if($query = \mySpires\mysqli()->prepare("DELETE FROM tags WHERE username = ? AND tag = ?")) {
             $query->bind_param("ss", $this->username, $this->tag);
             if($query->execute()) return true;
         }
@@ -147,7 +147,7 @@ class mySpires_Tag {
         if(!$props) $props = (object)[];
 
         if(!$original_props) {
-            if($q = mySpires::db()->prepare("INSERT INTO tags (username, tag) VALUES (?,?)")) {
+            if($q = \mySpires\mysqli()->prepare("INSERT INTO tags (username, tag) VALUES (?,?)")) {
                 $q->bind_param("ss", $this->username, $this->tag);
                 if($q->execute()) {
                     return $this->set_properties($props);
@@ -161,9 +161,9 @@ class mySpires_Tag {
                 $props->$key = $original_props->$key;
             }
         }
-        $props->description = mySpires::db()->real_escape_string($props->description);
+        $props->description = \mySpires\mysqli()->real_escape_string($props->description);
 
-        if($query = mySpires::db()->prepare("UPDATE tags SET description = ?, starred = ?, shared = ?, visited  = ? WHERE username = ? AND tag = ?")) {
+        if($query = \mySpires\mysqli()->prepare("UPDATE tags SET description = ?, starred = ?, shared = ?, visited  = ? WHERE username = ? AND tag = ?")) {
             $query->bind_param("ssssss",
                 $props->description, $props->starred, $props->shared, $props->visited,
                 $this->username, $this->tag);

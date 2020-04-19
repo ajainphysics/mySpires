@@ -1,5 +1,11 @@
 <?php
 
+use refSpires\RefRecord;
+use function mySpires\mysqli;
+use function mySpires\query;
+use function mySpires\tags\cleanup;
+use function mySpires\tags\cleanup_list;
+
 /**
  * mySpires_Record class deals with individual records in an efficient manner.
  * It provides useful methods enabling to load, add, update or delete records from the database.
@@ -8,43 +14,62 @@
 class mySpires_Record
 {
     private $loaded = false;
-    private $username = "";
+    private $fields = Array("inspire", "arxiv", "doi", "bibkey", "ads");
+    private $meta_properties = Array(
+        "id", "inspire", "arxiv", "arxiv_v", "bibkey", "ads", "doi",
+        "title", "author", "author_id", "published", "bibtex");
+    private $status_properties = Array("updated", "status");
+    private $user_properties = Array("tags", "comments", "temp");
 
-    public $id; // mySpires record id
-    public $inspire;  // INSPIRE id
-    public $arxiv; // arXiv id
-    public $arxiv_v; // arXiv version
-    public $bibkey; // INSPIRE BibTeX key
-    public $title;  // Title
-    public $author; // Author(s)
-    public $published; // Date of publication/appearance
-    public $doi; // DOI of publication
-    public $temp; // Is entry temporary? Used to check if BibTeX record should be updated.
+    public $id;
+    public $inspire, $arxiv, $arxiv_v, $bibkey, $ads, $doi,
+        $title, $author, $author_id, $published, $bibtex, $temp; // Properties to be copied from RefSpires
     public $tags = ""; // mySpires tags
     public $comments = ""; // mySpires comments
     public $updated; // Date of last update
     public $status = "unsaved"; // Current status: unsaved/saved/binned
 
+    private $username = "";
+    function username($username = null) {
+        \mySpires\users\verify($username, true);
+        $this->username = $username;
+    }
+
     /**
      * mySpires_Record constructor.
      * @param string|object $query Either the query to be loaded or a MySQL records result
-     * @param string $field Either field of the query, a MySQL entries result or a date for temporary entry.
+     * @param string|object|array $field Either field of the query, a MySQL entries result or a date for temporary entry.
      * @param string $username
      */
     function __construct($query = null, $field = null, $username = null) {
-        if(mySpires::verify_username($username, true)) $this->username = $username;
+        $this->username($username);
 
         $qtype = gettype($query);
         if($qtype == "object") {
+            if(gettype($field) == "array") $opts = (object)$field;
+            elseif(gettype($field) == "object") $opts = $field;
+            else $opts = (object)[];
+
+            if(property_exists($opts,"username")) $this->username($opts->username);
+
+            foreach($this->fields as $f)
+                if(!property_exists($query, $f)) $query->$f = null;
             $this->populate($query);
         }
         elseif($qtype == "integer" || $qtype == "string") {
             if (!$field) $field = "id";
-            $response = mySpires::find_records([$field=>$query], $this->username);
+
+            $myS = new mySpires_Records();
+            $myS->username($this->username);
+            $myS->find([$field=>$query]);
+
+            $response = $myS->records();
             $response = reset($response);
 
+            // $response = mySpires::find_records([$field=>$query], $this->username);
+            // $response = reset($response);
             if($response) $this->populate($response);
-            elseif(in_array($field, Array("inspire", "arxiv"))) {
+            elseif(in_array($field, $this->fields)) {
                 $this->fetch($query, $field);
                 $this->sync();
             }
@@ -60,19 +85,47 @@ class mySpires_Record
      */
     private function populate($source) {
         // If you provide id, the entry will not be synced with the database.
-        if(!$source->id) {
-            $savedRecord = mySpires::find_records(["inspire"=>$source->inspire, "arxiv"=>$source->arxiv], $this->username);
+        if(!property_exists($source,"id") || !$source->id) {
+            $myS = new mySpires_Records();
+            $myS->username($this->username);
+            $myS->find([
+                "inspire" => $source->inspire,
+                "arxiv" => $source->arxiv,
+                "bibkey" => $source->bibkey,
+                "ads" => $source->ads,
+                "doi" => $source->doi
+            ]);
+            $savedRecord = $myS->records();
             $savedRecord = reset($savedRecord);
             if($savedRecord) $this->populate($savedRecord);
         }
 
-        $properties = Array("id","arxiv","inspire","arxiv_v","bibkey","title","author","published","doi","updated","status");
-        foreach($properties as $property) {
-            if(property_exists($source, $property) && $source->$property) $this->$property = $source->$property;
+        // Overwrite if the source is non-empty
+        foreach($this->meta_properties as $property) {
+            // Overwrite if the existing properties are empty
+            if((!property_exists($source, "source") || $source->source != "inspire") && $this->inspire) {
+                if (property_exists($source, $property) && $source->$property && !$this->$property)
+                    $this->$property = $source->$property;
+            }
+            // Overwrite even if the existing properties are non-empty
+            else {
+                if (property_exists($source, $property) && $source->$property)
+                    $this->$property = $source->$property;
+            }
         }
-        if(property_exists($source,"temp")) $this->temp = $source->temp;
-        if(property_exists($source,"tags")) $this->tags = $source->tags;
-        if(property_exists($source,"comments")) $this->comments = $source->comments;
+
+        // Overwrite if the source is non-empty even if the existing properties are non-empty
+        foreach($this->status_properties as $property) {
+            if (property_exists($source, $property) && $source->$property)
+                $this->$property = $source->$property;
+        }
+
+        // Overwrite even if the source is empty and even if the existing properties are non-empty
+        foreach($this->user_properties as $property)
+            if(property_exists($source, $property))
+                $this->$property = $source->$property;
+
+        // preprint($this);
 
         $this->loaded = true;
     }
@@ -85,13 +138,17 @@ class mySpires_Record
      */
     private function fetch($query, $field = "inspire")
     {
-        if(!in_array($field, ["inspire", "arxiv"])) return false;
+        if(!in_array($field, $this->fields))
+            return false;
 
-        // Try loading from INSPIRE.
-        $q = $query;
-        if($field == "inspire") $q = "find recid " . $query; // Dodgy bit about "find" or not to "find".
-        elseif($field == "arxiv") $q = "find eprint " . $query;
+        $response = new RefRecord($query, $field);
+        if($response->populated) {
+            $this->populate($response);
+        }
 
+        return false; // Return false if not fetched.
+
+        /*
         $response = new InspireRecord($q);
         if($response->inspire) {
             $this->populate($response);
@@ -106,26 +163,26 @@ class mySpires_Record
                 return true;
             }
         }
+        */
 
-        // Return false if not fetched.
-        return false;
+
     }
 
     public function add_tag($tag) {
-        $tag = mySpires::tag_cleanup($tag);
+        $tag = cleanup($tag);
         if(!$tag) return false;
 
         $this->tags .= "," . $tag;
-        $this->tags = mySpires::tag_list_cleanup($this->tags);
+        $this->tags = cleanup_list($this->tags);
 
         return true;
     }
 
     public function remove_tag($tag) {
-        $tag = mySpires::tag_cleanup($tag);
+        $tag = cleanup($tag);
         if(!$tag) return false;
 
-        $this->tags = mySpires::tag_list_cleanup($this->tags);
+        $this->tags = cleanup($this->tags);
 
         $tags = explode(",", $this->tags);
         $tags = array_filter($tags, function($t) use($tag) {
@@ -147,17 +204,14 @@ class mySpires_Record
     function update()
     {
         if (!$this->loaded) return false;
-
-        if ($this->inspire) {
-            $this->fetch($this->inspire, "inspire");
-            $this->sync();
-            return true;
-        } elseif ($this->arxiv) {
-            $this->fetch($this->arxiv, "arxiv");
-            $this->sync();
-            return true;
-        } else
-            return false;
+        foreach($this->fields as $field) {
+            if ($this->$field) {
+                $this->fetch($this->$field, $field);
+                $this->sync();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -202,7 +256,7 @@ class mySpires_Record
     function sync()
     {
         if (!$this->loaded) return false;
-        $db = mySpires::db();
+        $db = mysqli();
 
         // First we need to process things that are going into the database.
 
@@ -211,32 +265,38 @@ class mySpires_Record
 
         $inspire = "'" . $db->real_escape_string($this->inspire) . "'";
         $bibkey = "'" . $db->real_escape_string($this->bibkey) . "'";
+        $ads = "'" . $db->real_escape_string($this->ads) . "'";
         $title = "'" . $db->real_escape_string($this->title) . "'";
         $author = "'" . $db->real_escape_string($this->author) . "'";
+        $author_id = "'" . $db->real_escape_string($this->author_id) . "'";
+        $bibtex = "'" . $db->real_escape_string($this->bibtex) . "'";
         $arxiv = "'" . $db->real_escape_string($this->arxiv) . "'";
         $arxiv_v = "'" . $db->real_escape_string($this->arxiv_v) . "'";
         $doi = "'" . $db->real_escape_string($this->doi) . "'";
         $temp = "'" . $db->real_escape_string($this->temp) . "'";
 
         if (!$this->id) {
-            mySpires::db_query("INSERT INTO records (inspire, bibkey, title, author, arxiv, arxiv_v, published, doi, temp) 
-                    VALUES ($inspire, $bibkey, $title, $author, $arxiv, $arxiv_v, $published, $doi, $temp)");
-            $this->id = mySpires::db()->insert_id;
+            query(
+                "INSERT INTO records (inspire, bibkey, ads, title, author, author_id, bibtex, arxiv, arxiv_v, published, doi, temp) 
+                    VALUES ($inspire, $bibkey, $ads, $title, $author, $author_id, $bibtex, $arxiv, $arxiv_v, $published, $doi, $temp)");
+            $this->id = mysqli()->insert_id;
         } else {
-            mySpires::db_query("UPDATE records SET inspire = $inspire, bibkey = $bibkey, title = $title, 
-                              author = $author, arxiv = $arxiv, arxiv_v = $arxiv_v, published = $published, 
+            // Update record with override not set to 1
+            query(
+                "UPDATE records SET inspire = $inspire, bibkey = $bibkey, ads = $ads, arxiv = $arxiv, arxiv_v = $arxiv_v, 
+                   title = $title, author = $author, author_id = $author_id, bibtex = $bibtex, published = $published, 
                               doi = $doi, temp = $temp,
-                              updated = now() WHERE id = {$this->id}");
+                              updated = now() WHERE (id = {$this->id} AND override = 0)");
         }
 
         if ($this->username) {
-            $this->tags = mySpires::tag_list_cleanup($this->tags);
+            $this->tags = cleanup_list($this->tags);
             $tags = "'" . $db->real_escape_string($this->tags) . "'";
             $comments = "'" . $db->real_escape_string($this->comments) . "'";
 
             // If saved, sync data with the entries table.
             if ($this->status === "saved" || $this->status === "binned") {
-                mySpires::db_query("INSERT INTO entries (username, id, tags, comments, bin) 
+                query("INSERT INTO entries (username, id, tags, comments, bin) 
                     VALUES ('{$this->username}', {$this->id}, $tags, $comments, 0)
                     ON DUPLICATE KEY UPDATE tags = $tags, comments = $comments, bin = 0");
                 $this->updated = date('Y-m-d H:i:s');
@@ -244,7 +304,7 @@ class mySpires_Record
 
             // If binned, mark as binned
             if ($this->status === "binned") {
-                mySpires::db_query("UPDATE entries SET bin=1 
+                query("UPDATE entries SET bin=1 
                     WHERE id = {$this->id} AND username = '{$this->username}'");
             }
 
@@ -252,7 +312,7 @@ class mySpires_Record
             if ($this->status === "unsaved") {
                 $this->comments = "";
                 $this->tags = "";
-                mySpires::db_query("DELETE FROM entries 
+                query("DELETE FROM entries 
                     WHERE id = {$this->id} AND username = '{$this->username}'");
             }
         }
@@ -266,9 +326,22 @@ class mySpires_Record
     function history() {
         if(!$this->loaded || !$this->username) return; // Go back if not loaded or not logged in.
 
-        if(!mySpires::user()->info->history_enabled) return; // If history is not enabled, return.
+        if(!\mySpires\users\user()->info->history_enabled) return; // If history is not enabled, return.
 
-        mySpires::db_query("INSERT INTO history (username, id) VALUES ('{$this->username}', '{$this->id}') 
+        query("INSERT INTO history (username, id) VALUES ('{$this->username}', '{$this->id}') 
                                            ON DUPLICATE KEY UPDATE hits = hits + 1");
+    }
+
+    function author_lastnames() {
+        if(!$this->loaded || !$this->username) return null; // Go back if not loaded or not logged in.
+
+        $results = explode(",", $this->author);
+        array_walk($results, function(&$a) {
+            $e = explode(" ", trim($a));
+            $a = end($e);
+        });
+
+        if(sizeof($results) > 6) return $results[0] . " et al.";
+        else return implode(", ", $results);
     }
 }
