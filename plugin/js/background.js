@@ -58,3 +58,10 @@ browser.runtime.onMessage.addListener(request => {
         return Promise.resolve(true);
     }
 });
+
+browser.commands.onCommand.addListener(function(command) {
+    if(command.toString() === "toggle-cite-window") {
+        console.log('Command:', command);
+        ask_page("toggle-cite-window", "1").catch(console.log);
+    }
+});

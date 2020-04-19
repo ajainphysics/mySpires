@@ -1,19 +1,23 @@
 <?php
+namespace library\dropbox;
 
 class Dropbox {
-    private $token;
-    private $opts;
+    private $token; // User token
+    private $opts; // Options object
 
-    public $reset;
-    public $reset_argument;
+    public $reset; // User provided function to call when token is reset
+    public $reset_argument; // Arguments of the reset function
 
-    function __construct($token = "") {
+    /**
+     * Dropbox constructor.
+     * @param object $opts
+     * @param string $token
+     */
+    function __construct($opts, $token = "") {
         if($token) {
             $this->token = $token;
         }
-
-        $opts = include(__DIR__ . "/../../../.myspires_config.php");
-        $this->opts = $opts->dropbox;
+        $this->opts = $opts;
     }
 
     function reauth($code) {
@@ -23,7 +27,7 @@ class Dropbox {
             "grant_type" => "authorization_code",
             "client_id" => $this->opts->key,
             "client_secret" => $this->opts->secret,
-            "redirect_uri"  => mySpires::$server . "api/dbxauth.php"
+            "redirect_uri"  => $this->opts->redirect_uri
         );
 
         $ch = curl_init( $url );

@@ -1,4 +1,4 @@
-body {
+.popup-body {
   font-family: "Lato", sans-serif;
   background: #F5F5F5;
   font-size: 100%;
@@ -31,6 +31,16 @@ a {
     position: absolute;
     right: 15px;
     bottom: 2px; }
+  .header .current-user {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 70%;
+    background: #252525;
+    color: #F5F5F5;
+    border-radius: 15px;
+    padding: 0 8px;
+    display: none; }
 
 #status {
   /* avoid an excessively wide status text */
@@ -40,20 +50,13 @@ a {
   max-width: 300px; }
 
 .main-content {
-  display: none;
-  padding: 8px 10px 10px 10px;
   border-bottom: 1px solid #c5c5c5; }
-
-div.main-buttons {
-  margin-top: 5px; }
-  div.main-buttons a {
-    margin: 0 1px;
-    width: 96px; }
 
 #login_msg_box, #logged_in_content, #download-box {
   display: none;
   font-size: 90%;
-  text-align: center; }
+  text-align: center;
+  padding: 10px; }
 
 .footbar {
   text-align: center;
@@ -69,9 +72,9 @@ div.main-buttons {
   margin-top: 5px; }
 
 .footlinks a, .login-links a {
-  padding-left: 5px;
-  padding-right: 3px;
-  border-left: 2px solid lightgray;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-left: 1px solid lightgray;
   color: dimgray; }
   .footlinks a:first-child, .login-links a:first-child {
     border: none; }
@@ -120,16 +123,13 @@ div.main-buttons {
   border-color: #ebccd1; }
 
 /* mySpires Bar */
-.mySpires-bar .paper-comments {
-  line-height: 1.2;
-  font-size: 80%; }
-
 #record-wrapper {
   display: none;
   background: white;
   text-align: left;
   margin: 0 -15px;
-  box-shadow: inset 1px 1px 5px #888888; }
+  box-shadow: inset 1px 1px 5px #888888;
+  padding: 10px; }
   #record-wrapper #record-title {
     font-size: 90%;
     margin: 0; }
@@ -181,5 +181,20 @@ div.main-buttons {
 .busy-loader {
   position: absolute;
   bottom: -3px; }
+
+.mySpires-context .record-wrapper .mySpires-box .title-wrapper {
+  margin-top: 0; }
+.mySpires-context .record-wrapper .mySpires-box .img-wrapper {
+  display: none; }
+.mySpires-context .record-wrapper .mySpires-bar .edit-button {
+  margin-top: 1.5px; }
+.mySpires-context .myspires-search-bar .search-button {
+  display: none; }
+.mySpires-context .myspires-search-results {
+  height: 300px;
+  box-shadow: inset 1px 1px 5px #888888;
+  padding: 5px 15px;
+  margin: 7px -15px -10px -15px;
+  cursor: initial; }
 
 /*# sourceMappingURL=popup.css.map */

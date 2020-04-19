@@ -1,4 +1,8 @@
 <?php
+
+use function mySpires\config;
+use function mySpires\users\user;
+
 if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStorm
 ?>
 
@@ -30,7 +34,7 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
 
     <?php
     $siteTitle = "mySpires";
-    $user = mySpires::user();
+    $user = user();
     if($user)
         $siteTitle = $SITEOPTIONS["pages"][pageLabel]["name"]." | mySpires - ".$user->name;
     ?>
@@ -55,7 +59,7 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
     <link rel="stylesheet" href="//resources.ajainphysics.com/awesomplete/awesomplete.css" />
 
     <!-- The main website CSS -->
-    <link href="api/lib/mySpires_Bar.css" rel="stylesheet">
+    <link href="api/lib/mySpires.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
     <!-- For iPad -->
@@ -68,7 +72,9 @@ if(!isset($SITEOPTIONS)) $SITEOPTIONS = Array(); // basically to satisfy PhpStor
 </head>
 
 <?php
-if($user = mySpires::user()) {
+if($user = user()) {
+    $server = config("server");
+
     if (!$user->info->dbxtoken && $user->info->dbx_reminder) {
         $alert_id = webapp::alert(
             "You can now connect a Dropbox account to mySpires. mySpires will keep an updated <i>mySpires_"
@@ -81,7 +87,7 @@ if($user = mySpires::user()) {
         $(function() {
             $('#dbx_no_reminder').click(function(e) {
                 e.preventDefault();
-                $.get('" . mySpires::$server . "api/dbxauth.php', {'no_reminder': 1});
+                $.get('" . $server->location . "api/dbxauth.php', {'no_reminder': 1});
                 $('#alert-" . ($alert_id - 1) . "').alert('close');
             });
         });

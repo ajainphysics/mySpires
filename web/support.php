@@ -1,12 +1,18 @@
 <?php
 
+use function library\tools\null_populate;
+use function mySpires\config;
+use function mySpires\users\user;
+
 include_once "lib/settings.php";
 
 null_populate($_POST, ["support-message"]);
 
 define("pageLabel", "support");
 
-$user = mySpires::user();
+$server = config("server");
+
+$user = user();
 
 $post_message = false;
 if($_POST["support-message"]) {
@@ -29,7 +35,7 @@ if($_POST["support-message"]) {
 
         $post_message = mail("admin@ajainphysics.com", $subject, $msg, $headers);
 
-        mySa::message($msg,1);
+        \mySa\message($msg,1);
     }
 
     if($post_message) {
@@ -216,7 +222,7 @@ if($_POST["support-message"]) {
                 <h2>Backend Structure</h2>
 
                 <p>
-                    The mySpires project is coded primarily in PHP on the server side, and JavaScript and Sass on the client side. User data and records are hosted on a MySQL server at <?php echo mySpires::$serverdomain; ?>. The entire codebase of mySpires is published on <a href="https://github.com/ajainphysics/mySpires" target="_blank">GitHub</a>.
+                    The mySpires project is coded primarily in PHP on the server side, and JavaScript and Sass on the client side. User data and records are hosted on a MySQL server at <?php echo $server->host; ?>. The entire codebase of mySpires is published on <a href="https://github.com/ajainphysics/mySpires" target="_blank">GitHub</a>.
                 </p>
 
                 <p>
@@ -224,7 +230,7 @@ if($_POST["support-message"]) {
                 </p>
 
                 <p>
-                    The plugin only acts as a communication channel between your browser and the mySpires server. Your data is not saved offline on your machine, but is instead present on the mySpires server at <?php echo mySpires::$serverdomain; ?>. It enables you to access your mySpires database from anywhere and over multiple machines, say your personal laptop and your workstation at the office, simultaneously.
+                    The plugin only acts as a communication channel between your browser and the mySpires server. Your data is not saved offline on your machine, but is instead present on the mySpires server at <?php echo $server->host; ?>. It enables you to access your mySpires database from anywhere and over multiple machines, say your personal laptop and your workstation at the office, simultaneously.
                 </p>
 
             </section>
@@ -247,7 +253,7 @@ if($_POST["support-message"]) {
                             <p> Couldn't find what you were looking for? Or have some suggestions to improve mySpires? Get in touch! </p>
                         <?php } ?>
 
-                        <form method="post" class="support-form" novalidate>
+                        <form method="post" class="support-form fancy-form" novalidate>
                             <input type="hidden" name="support-message" value="1">
                             <input id="message-username" type="hidden" name="message-username" value="<?php if($user) echo $user->username; ?>">
 

@@ -1,10 +1,14 @@
 <?php
 
+use function library\tools\null_populate;
+use function mySpires\config;
+use function mySpires\users\admin;
+use function mySpires\users\user;
+use function mySpires\users\username;
+
 session_start();
 
 include_once "lib/settings.php";
-include_once "api/lib/mySpires.php";
-include_once "lib/functions.php";
 
 null_populate($_POST, [
     "personal_details", "email", "first_name", "last_name", "history_status",
@@ -17,13 +21,13 @@ null_populate($_GET, ["user"]);
 
 define("pageLabel", "preferences");
 
-if (!mySpires::user()) {
+if (!user()) {
     header("Location: " . webRoot);
     exit();
 }
 
-if($_GET["user"]) $control_user = new mySpires_User($_GET["user"]);
-else $control_user = mySpires::user();
+if($_GET["user"]) $control_user = new \mySpires\User($_GET["user"]);
+else $control_user = user();
 
 if(!$control_user->auth()) header("Location: preferences.php");
 
@@ -51,7 +55,7 @@ if($_POST["personal_details"]) {
 
 } elseif ($new_password) {
     $success = false;
-    if(mySpires::admin())
+    if(admin())
         $success = $control_user->set_password($new_password);
     else
         $success = $control_user->change_password($current_password, $new_password);
@@ -80,13 +84,13 @@ if($_POST["personal_details"]) {
                 <?php webapp::display_alerts(); ?>
             </div>
 
-            <div id="page-title" class="row main-title">
-                <div class="col-md-12">
-                    <i id="parent-page-link" class="fa fa-cogs"></i>
-                    <h2>Preferences
-                        <?php if($control_user->username !=  mySpires::username()) echo "for " . $control_user->name . " ("  . $control_user->username .  ")"; ?> </h2>
+            <nav class="title-nav navbar navbar-expand-lg navbar-light">
+                <div class="main-title">
+                    <i class="main-icon fa fa-cogs"></i>
+                    <h1>Preferences
+                        <?php if($control_user->username != username()) echo "for " . $control_user->name . " ("  . $control_user->username .  ")"; ?> </h1>
                 </div>
-            </div>
+            </nav>
 
             <form method="post">
                 <h3 class="settings-section"><i class="fas fa-sliders-h"></i> Site Options</h3>
@@ -136,12 +140,13 @@ if($_POST["personal_details"]) {
                     <label class="col-md-3 col-form-label">Dropbox</label>
                     <div class="col-md-9">
                         <?php
-                        $url = urlencode(mySpires::$server . "preferences.php?user=" . $control_user->username);
+                        $server = config("server");
+                        $url = urlencode($server->location . "preferences.php?user=" . $control_user->username);
                         $dbx = $control_user->dropbox();
                         $dbxuser = $dbx->user();
                         if($dbxuser) { ?>
                             <div class="form-noinput">
-                                <img class="dbxthumb" src="<?php echo $dbxuser->profile_photo_url; ?>">
+                                <img class="dbxthumb" src="<?php echo $dbxuser->profile_photo_url; ?>" alt="">
                                 <?php echo $dbxuser->name->display_name; ?>
                                 (<a href="api/dbxauth.php?user=<?php echo $control_user->username; ?>&unlink=1&redirect=<?php echo $url; ?>">Unlink</a>)
                             </div>
@@ -208,7 +213,7 @@ if($_POST["personal_details"]) {
             <form method="post">
                 <h3 class="settings-section"><i class="fa fa-key"></i> Password</h3>
                 <div class="form-group row">
-                    <?php if(!mySpires::admin()) { ?>
+                    <?php if(!admin()) { ?>
                     <label for="current-password" class="col-md-3 col-form-label">Current Password</label>
                     <div class="col-md-9">
                         <input id="current-password" type="password" class="form-control" name="current-password"

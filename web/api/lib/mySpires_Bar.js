@@ -19,6 +19,7 @@ class mySpires_Bar {
         if(!box) box = $("body");
 
         this.box = box;
+        this.box.addClass("mySpires-context");
         this.bar = box.find(".mySpires-bar");
 
         this.bar.append(
@@ -291,7 +292,7 @@ class mySpires_Bar {
                 if (this.onupdate) this.onupdate();
                 this.refreshValues(); // Refresh the values.
                 this.editButton.removeClass("busy");
-            });
+            }).catch(console.log);
         });
         return this;
     }
@@ -432,6 +433,8 @@ class mySpires_Bar {
                         "<span class='tag-level-bars'>" + tagBars + "</span>" +
                         tagName +
                         " <i class='fa fa-times delete-tag'></i></button> ");
+
+                    this.tags.children(".paper-tag").tooltip({classes: {"ui-tooltip": "myspires-tooltip"}});
 
                     if(this.mode === "edit") {
                         this.tags.find(".delete-tag").css("display", "inline-block");

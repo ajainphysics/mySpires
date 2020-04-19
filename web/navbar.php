@@ -1,5 +1,5 @@
 <?php
-$user = mySpires::user();
+$user = \mySpires\users\user();
 ?>
 
 <nav id="top-bar" class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
@@ -58,10 +58,12 @@ $user = mySpires::user();
                             <b><?php echo $user->name; ?></b>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bibtexlink">
-                            <?php if(mySpires::admin()) { ?>
+                            <?php if(\mySpires\users\admin()) { ?>
                                 <a class="dropdown-item" href="admin.php" data-homenavigation="true">
                                     <i class="fa fa-user-secret"></i> Admin Panel</a>
                             <?php } ?>
+                            <a class="dropdown-item" href="bibtex.php"  data-homenavigation="true">
+                                <i class="fas fa-database"></i> BibTeX</a>
                             <a class="dropdown-item" href="preferences.php"  data-homenavigation="true">
                                 <i class="fas fa-cogs"></i> Preferences</a>
                             <a class="dropdown-item" href="bin.php"  data-homenavigation="true">
@@ -77,4 +79,6 @@ $user = mySpires::user();
         </div>
 
     </div> <!-- /container -->
+
+    <div class="loader busy-loader"></div>
 </nav>

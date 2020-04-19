@@ -1,6 +1,13 @@
 <?php
+namespace mySpires;
 
-class mySpires_User {
+use \library\dropbox\Dropbox;
+use function mySpires\tags\cleanup_list;
+use function mySpires\users\admin;
+use function mySpires\users\surname;
+use function mySpires\users\username;
+
+class User {
     private $loaded =  false;
 
     public $uid;
@@ -24,7 +31,7 @@ class mySpires_User {
     }
 
     private function load($q, $field) {
-        if($query = mySpires::db()->prepare("SELECT * FROM users WHERE {$field} = ?")) {
+        if($query = mysqli()->prepare("SELECT * FROM users WHERE {$field} = ?")) {
             $query->bind_param("s", $q);
             $query->execute();
 
@@ -57,7 +64,7 @@ class mySpires_User {
         if(!$this->loaded) return false;
         if(array_key_exists("username", $args)) return false;
 
-        $db = mySpires::db();
+        $db = mysqli();
 
         $types = "";
         $val_query = "";
@@ -114,18 +121,26 @@ class mySpires_User {
     }
 
     function dropbox($code = "") {
+        $opts = config("dropbox");
+
         if(!$this->loaded) return false;
         if($code) {
-            $dbx = new Dropbox();
+            $dbx = new Dropbox($opts);
             $this->update_info(["dbxtoken" => $dbx->reauth($code)]);
         } else {
-            $dbx = new Dropbox($this->info->dbxtoken);
+            $dbx = new Dropbox($opts, $this->info->dbxtoken);
         }
 
-        $dbx->reset = "mySpires::dropbox_reset";
+        $dbx->reset = '\mySpires\users\dropbox_reset';
         $dbx->reset_argument = $this->username;
 
         return $dbx;
+    }
+
+    function purge_history() {
+        if(!$this->loaded) return;
+
+        query("DELETE FROM history WHERE username = '{$this->username}'");
     }
 
     /**
@@ -133,7 +148,7 @@ class mySpires_User {
      */
     function auth() {
         if(!$this->loaded) return false;
-        return boolval(mySpires::admin() || $this->username == mySpires::username());
+        return boolval(admin() || $this->username == username());
     }
 
     function tags() {
@@ -141,14 +156,14 @@ class mySpires_User {
         $username = $this->username;
 
         $tags = [];
-        if($query = mySpires::db()->prepare("SELECT tags, id FROM entries WHERE username = ? AND bin=0 ORDER BY id")) {
+        if($query = mysqli()->prepare("SELECT tags, id FROM entries WHERE username = ? AND bin=0 ORDER BY id")) {
             $query->bind_param("s", $username);
             $query->execute();
             $entries = $query->get_result();
 
             $tag_records = [];
             while($entry = $entries->fetch_object()) {
-                $tags = explode(",", mySpires::tag_list_cleanup($entry->tags));
+                $tags = explode(",", cleanup_list($entry->tags));
 
                 foreach($tags as $tag) {
                     if(!array_key_exists($tag, $tag_records)) $tag_records[$tag] = [];
@@ -190,7 +205,7 @@ class mySpires_User {
             ];
         });
 
-        if($q = mySpires::db()->prepare("SELECT * FROM tags WHERE username = ?")) {
+        if($q = mysqli()->prepare("SELECT * FROM tags WHERE username = ?")) {
             $q->bind_param("s", $username);
             $q->execute();
             $results = $q->get_result();
@@ -208,7 +223,7 @@ class mySpires_User {
         $questions = implode(",", array_map(function(){return "?";}, $id_array));
         $s = implode("", array_map(function(){return "s";}, $id_array));
 
-        if($q = mySpires::db()->prepare("SELECT id, author FROM records WHERE id IN ({$questions})")) {
+        if($q = mysqli()->prepare("SELECT id, author FROM records WHERE id IN ({$questions})")) {
             $q->bind_param($s, ...$id_array);
             $q->execute();
             $results = $q->get_result();
@@ -227,11 +242,11 @@ class mySpires_User {
                 $tags[$tag]->authors = array_values(array_unique($tags[$tag]->authors));
 
                 usort($tags[$tag]->authors, function($a, $b) {
-                    return strcmp(mySpires::surname($a), mySpires::surname($b));
+                    return strcmp(surname($a), surname($b));
                 });
 
                 $tags[$tag]->surnames = array_map(function($a) {
-                    return mySpires::surname($a);
+                    return surname($a);
                 }, $tags[$tag]->authors);
 
                 $tags[$tag]->surnames = array_values(array_unique($tags[$tag]->surnames));

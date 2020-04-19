@@ -17,14 +17,14 @@ mySpiresCite.urgentBreak = function() {
 mySpiresCite.urgentBreak();
 
 $(function() {
-    mySpiresCite.$searchBox = $("#welcome-search");
-    mySpiresCite.$searchInput = mySpiresCite.$searchBox.find(".searchfield");
-    mySpiresCite.$searchBarReset = mySpiresCite.$searchBox.find(".search-bar-reset");
-    mySpiresCite.$searchBtn = mySpiresCite.$searchBox.find(".searchbtn");
+    mySpiresCite.$searchBox = $(".main-search-bar");
+    mySpiresCite.$searchInput = mySpiresCite.$searchBox.find(".search-field");
+    mySpiresCite.$searchBarReset = mySpiresCite.$searchBox.find(".search-reset");
+    mySpiresCite.$searchBtn = mySpiresCite.$searchBox.find(".search-button");
 
     Object.defineProperties(mySpiresCite, {
         searchQuery: {
-            get: function() {return mySpiresCite.$searchInput.val()},
+            get: function() {return mySpiresCite.$searchInput.val().trim()},
             set: function(val) {mySpiresCite.$searchInput.val(val)}
         }
     });
@@ -49,8 +49,16 @@ $(function() {
  * @return {boolean}
  */
 mySpiresCite.loadCitations = function () {
+    mySpiresCite.$searchResults = $("#cite-results").html("");
+    mySpiresCite.$emptyMessage = $("#empty-message").hide();
+    mySpiresCite.$noCiteMessage = $("#no-citations-message").hide();
+
     let userID = mySpiresCite.searchQuery;
-    if(!userID) return false;
+    if(!userID) {
+        mySpiresCite.$emptyMessage.show();
+        return false;
+    }
+
     let searchQuery = "find ea " + userID;
     let jrec = 1;
     let rg = 25;
@@ -60,16 +68,14 @@ mySpiresCite.loadCitations = function () {
         mySpiresCite.urgent.then(resolve);
         if (mySpiresCite.urgentFlag) return; // If urgent, abort!
 
-        $(".busy-loader").show();
         mySpiresCite.$searchBtn.html("<i class='fa fa-spinner fa-spin'></i>");
-
-        $("#cite-results").html("");
+        mySpiresCite.$busyLoader = $(".busy-loader").show();
 
         let results = new InspireRecords(searchQuery, {rg: rg, jrec: jrec});
+
         results.busy.then(function () {
             let citationPromiseList = [];
             let citationList = [];
-            let n = 0;
 
             for (let record of results.records) {
                 let query = "find refersto recid " + record.inspire + " and d > today - 365 and not ea " + userID;
@@ -92,22 +98,24 @@ mySpiresCite.loadCitations = function () {
                     return b.date - a.date;
                 });
 
+                if(!citationList.length) {
+                    mySpiresCite.$noCiteMessage.show();
+                }
+
                 let map = {};
                 let counter = 0;
                 let citationGroups = [];
                 for(let cite of citationList) {
-                    if(!map[cite.refersto.inspire]) {
+                    if(!map.hasOwnProperty(cite.refersto.inspire)) {
                         map[cite.refersto.inspire] = counter++;
                         citationGroups[map[cite.refersto.inspire]] = [];
                     }
                     citationGroups[map[cite.refersto.inspire]].push(cite);
                 }
-                console.log(citationGroups);
-
-                mySpiresCite.searchResults = $("#cite-results");
 
                 for (let citationGroup of citationGroups) {
-                    mySpiresCite.searchResults.append("<h6>" + citationGroup[0].refersto.title + "</h6>");
+                    mySpiresCite.$searchResults.append("<h6>" + citationGroup[0].refersto.title +
+                        "</h6>");
 
                     for (let cite of citationGroup) {
                         let monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -118,7 +126,7 @@ mySpiresCite.loadCitations = function () {
                             return arr[arr.length - 1];
                         });
 
-                        mySpiresCite.searchResults.append(
+                        mySpiresCite.$searchResults.append(
                             "<div class='cite-element'>" +
                             "<span class='published-date'>" + displayDate + "</span> " +
                             "<a href='https://inspirehep.net/record/" + cite.inspire + "'>" +
@@ -128,11 +136,11 @@ mySpiresCite.loadCitations = function () {
                             "</div>"
                         );
                     }
-                    mySpiresCite.searchResults.append("<br>");
+                    mySpiresCite.$searchResults.append("<br>");
                 }
 
-                $(".busy-loader").hide();
                 mySpiresCite.$searchBtn.html("Go");
+                mySpiresCite.$busyLoader.hide();
             });
 
             // mySpiresCite.savedSearches[searchURI] = {

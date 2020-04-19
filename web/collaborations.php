@@ -1,28 +1,32 @@
 <?php
 
+use mySpires\Collaboration;
+use mySpires\User;
+use function mySpires\query;
+use function mySpires\users\user;
+
 session_start();
 
 include_once "lib/settings.php";
-include_once "api/lib/mySpires.php";
-include_once "lib/functions.php";
+include_once "lib/webapp.php";
 
 define("pageLabel", "collaborations");
 
-if (!mySpires::user()) {
+if (!user()) {
     header("Location: /");
     exit();
 }
 
-$results = mySpires::db_query("SELECT cid FROM collaborations ORDER BY name");
+$results = query("SELECT cid FROM collaborations ORDER BY name");
 $user_collaborations = [];
 $user_pending_collaborations = [];
 
 while($result = $results->fetch_object()) {
-    $collaboration = new mySpires_Collaboration($result->cid);
+    $collaboration = new Collaboration($result->cid);
 
-    if(in_array(mySpires::user()->username, $collaboration->collaborators))
+    if(in_array(user()->username, $collaboration->collaborators))
         array_push($user_collaborations, $collaboration);
-    elseif(in_array(mySpires::user()->username, $collaboration->pending_collaborators))
+    elseif(in_array(user()->username, $collaboration->pending_collaborators))
         array_push($user_pending_collaborations, $collaboration);
 }
 
@@ -33,15 +37,11 @@ while($result = $results->fetch_object()) {
 
 <?php include "head.php"; // page head ?>
 
-<body id="page-history">
+<body id="page-collaborations">
 
 <div class="main-wrapper">
 
     <?php include "navbar.php"; // navbar ?>
-
-    <div class="busy-loader-wrapper">
-        <div class="loader busy-loader"></div>
-    </div>
 
     <div class="main-content">
 
@@ -49,10 +49,10 @@ while($result = $results->fetch_object()) {
 
             <?php webapp::display_alerts(); ?>
 
-            <nav id="title-nav" class="navbar navbar-expand-lg navbar-light">
-                <div id="page-title" class="main-title">
-                    <i id="parent-page-link" class="fas fa-handshake"></i>
-                    <div id="title-wrapper"><h2>Collaborations</h2></div>
+            <nav class="title-nav navbar navbar-expand-lg navbar-light">
+                <div class="main-title">
+                    <i class="main-icon fas fa-handshake"></i>
+                    <div><h2>Collaborations</h2></div>
                 </div>
             </nav>
 
@@ -69,7 +69,7 @@ while($result = $results->fetch_object()) {
                             elseif(in_array($collaborator, $collaboration->suggested_collaborators))
                                 $status = "suggested";
 
-                            $collaborator = new mySpires_User($collaborator);
+                            $collaborator = new User($collaborator);
                             ?>
                         <div class="collaborator-box collaborator-<?php echo $status ?>">
                             <p class="name"><?php echo $collaborator->name; ?></p>

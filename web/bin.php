@@ -3,12 +3,11 @@
 session_start();
 
 include_once "lib/settings.php";
-include_once "api/lib/mySpires.php";
-include_once "lib/functions.php";
+include_once "lib/webapp.php";
 
 define("pageLabel", "bin");
 
-if (!mySpires::user()) {
+if (!\mySpires\users\user()) {
     header("Location: /");
     exit();
 }
@@ -25,22 +24,18 @@ if (!mySpires::user()) {
 
     <?php include "navbar.php"; // navbar ?>
 
-    <div class="busy-loader-wrapper">
-        <div class="loader busy-loader"></div>
-    </div>
-
     <div class="main-content">
 
         <div class="container">
 
             <?php webapp::display_alerts(); ?>
 
-            <div id="page-title" class="row main-title">
-                <div class="col-md-12">
-                    <i id="parent-page-link" class="fas fa-trash-alt"></i>
-                    <div id="title-wrapper"><h2>Bin</h2></div>
+            <nav class="title-nav navbar navbar-expand-lg navbar-light">
+                <div class="main-title">
+                    <i class="main-icon fas fa-trash-alt"></i>
+                    <div><h1>Bin</h1></div>
                 </div>
-            </div>
+            </nav>
 
             <div id="empty-message">
                 <img class="mySpires-logo" src="img/mySpires512_333.png" alt="mySpires">
@@ -49,11 +44,7 @@ if (!mySpires::user()) {
                 </p>
             </div>
 
-            <div class="row paper-boxes">
-                <div class="col-sm-12">
-                    <div class="paper-spinner-wrapper"><i class='fa fa-spinner fa-spin' aria-hidden='true'></i></div>
-                </div>
-            </div>
+            <div class="row paper-boxes"></div>
 
             <div class="load-more-boxes">
                 <button type="button" class="btn btn-outline-secondary mx-auto">Load More</button>

@@ -1,5 +1,5 @@
 <?php
 
-include_once "lib/mySa.php";
+include_once "core/mySpires.php";
 
-mySa::wake();
+\mySa\wake();

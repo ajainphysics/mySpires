@@ -31,11 +31,13 @@ $SITEOPTIONS["pages"] = Array(
     "login"          => ["name" => "Sign In",     "path" => ".",               "auth" => -1],
     "share"          => ["name" => "Share",       "path" => "share.php",       "auth" => -1],
     "admin"          => ["name" => "Admin Panel", "path" => "admin.php",       "auth" => 1],
-    "collaborations" => ["name" => "Collaborations", "path" => "collaborations.php",       "auth" => -1]
+    "collaborations" => ["name" => "Collaborations", "path" => "collaborations.php",       "auth" => -1],
+    "bibtex"         => ["name" => "BibTeX",      "path" => "bibtex.php",       "auth" => -1]
 );
 
 $SITEOPTIONS["dependencies"] = "remote";
 
-include_once(__DIR__."/../api/lib/mySpires.php"); // Always include mySpires.
-include_once(__DIR__."/../api/lib/mySa.php"); // Always include mySpires.
-include_once(__DIR__."/functions.php"); // Always include custom functions.
+include_once(__DIR__ . "/webapp.php"); // Always include custom functions.
+
+require_once(__DIR__ . "/../api/library/tools.php"); // Always include custom functions.
+require_once(__DIR__ . "/../api/core/mySpires.php"); // mySpires core

@@ -12,14 +12,18 @@ function goto_tag(tag, replace = false) {
     dispatchEvent(new PopStateEvent('popstate', {state: {tag: tag}}));
 }
 
-let load_library_counter = 0;
-let tagParentAwesomeplete;
-
 $(function() {
     tagParentAwesomeplete = new Awesomplete($("#edit-tag-parent").get(0))
 });
 
+let load_library_counter = 0;
+let tagParentAwesomeplete;
+let current_tag = "";
+
 function load_library(tag) {
+    $(".search-area").hide();
+    $(".library-area").show();
+
     let load_library_instance = ++load_library_counter;
 
     let tag_;
@@ -31,14 +35,19 @@ function load_library(tag) {
         tag_ = tag.replace(/ /g, "_").replace(/\//g, "__");
     }
 
+    current_tag = tag;
+
     let $busy_loader = $(".busy-loader").show();
 
     let $body = $("body"),
-        $titleNav = $("#title-nav").hide(),
-        $pageTitle = $("#page-title"),
-        $heading = $("#page-title h2"),
-        $breadcrumb = $("#page-breadcrumb"),
-        $parentPageLink = $("#parent-page-link"),
+        $titleNav = $(".title-nav").hide(),
+        $pageTitle = $(".main-title"),
+        $heading = $(".main-title .main-heading"),
+        $breadcrumb = $(".main-breadcrumb"),
+        $parentPageLink = $(".main-title .main-icon"),
+        $searchBar = $(".main-search-bar").hide(),
+        $searchField = $(".main-search-bar .search-field"),
+        $subtagsWrapper = $(".subtags-wrapper"),
         $starredTags = $(".starred-tags").html(""),
         $subtags = $(".subtags").html(""),
         $recordsTitle = $(".paper-boxes .records-header").hide(),
@@ -58,21 +67,24 @@ function load_library(tag) {
 
     $body.removeClass(function (index, className) {
         return (className.match(/(^|\s)library-tag-\S+/g) || []).join(' ');
-    });
+    }).removeClass("library-search");
 
     $(".paper-box").remove();
 
     mySpires.prepare().then(function() {
         let properties = mySpires.tagsinfo[tag];
 
+        $searchBar.show();
+        $searchField.focus();
+
         // Title and Breadcrumb
 
         if(!tag) {
             $body.addClass("library-tag-Untagged");
-            $pageTitle.addClass("main-title");
+            $pageTitle.removeClass("show-breadcrumb");
             $heading.html("Library");
             $breadcrumb.html("");
-            $parentPageLink.addClass("fa-hdd").removeClass("fa-chevron-left");
+            $parentPageLink.addClass("fa-hdd").removeClass("fa-chevron-left fa-search");
 
             $titleNav.css("display", "flex");
         }
@@ -94,7 +106,7 @@ function load_library(tag) {
                 breadcrumb += " / <a href='/library.php?tag=" + subtitleLink + "' data-tag='" + subtitleLink + "'>" + t + "</a>";
             }
 
-            $pageTitle.removeClass("main-title");
+            $pageTitle.addClass("show-breadcrumb");
             $heading.html(
                 tagEx[tagEx.length - 1] + " <i id='tag-star' class='far fa-star'></i>"
             );
@@ -105,7 +117,7 @@ function load_library(tag) {
                 goto_tag($(this).attr("data-tag"));
             });
 
-            let $star = $("#page-title h2 i");
+            let $star = $(".main-title .main-heading i");
 
             if(properties.starred) $star.removeClass("far").addClass("fas");
             $star.click(() => {
@@ -122,7 +134,7 @@ function load_library(tag) {
                 }).catch(console.log)
             });
 
-            $parentPageLink.removeClass("fa-hdd").addClass("fa-chevron-left");
+            $parentPageLink.removeClass("fa-hdd fa-search").addClass("fa-chevron-left");
             $parentPageLink.off("click").click(function() {
                 let i = tag.lastIndexOf("/");
                 if(i === -1) goto_tag("");
@@ -178,24 +190,28 @@ function load_library(tag) {
         }
 
         if(starredTags_count > 0) {
-            $starredTags.prepend("<h4 class='tags-heading'>Starred Tags (" + starredTags_count + ")</h4>");
+            $starredTags.prepend("<h2 class='tags-heading'>Starred Tags (" + starredTags_count + ")</h2>");
         }
         if(subtags_count > 0) {
             if(!tag && starredTags_count > 0)
-                $subtags.prepend("<h4 class='tags-heading'>Other Tags (" + subtags_count + ")</h4>");
+                $subtags.prepend("<h2 class='tags-heading'>Other Tags (" + subtags_count + ")</h2>");
             else if(!tag)
-                $subtags.prepend("<h4 class='tags-heading'>Tags (" + subtags_count + ")</h4>");
+                $subtags.prepend("<h2 class='tags-heading'>Tags (" + subtags_count + ")</h2>");
             else
-                $subtags.prepend("<h4 class='tags-heading'>Subtags (" + subtags_count + ")</h4>");
+                $subtags.prepend("<h2 class='tags-heading'>Subtags (" + subtags_count + ")</h2>");
         }
 
+        if(starredTags_count + subtags_count > 0) $subtagsWrapper.show();
+        else $subtagsWrapper.hide();
+
         if(properties === undefined && subtags_count === 0) {
-            $("#empty-library-message").show();
+            $("#empty-message").show();
         }
 
         // Records
 
         mySpires.tag(tag).then(function (records) {
+            console.log(records);
 
             let keys = Object.keys(records);
             keys.sort(function (a, b) {
@@ -394,6 +410,112 @@ function load_library(tag) {
         }
     });
 }
+
+let load_search_counter = 0;
+
+function load_search(q) {
+    let $search_field = $(".main-search-bar .search-field").focus();
+
+    if(typeof q === 'undefined') {
+        q = $search_field.val().replace(/[^0-9a-z\s]/gi, ' ').trim();
+    } else {
+        $search_field.val(q);
+    }
+
+    q = q.split(" ").filter(function (qBit) {
+        return qBit.length > 2;
+    }).join(" ");
+
+    if(!q) return load_library(current_tag);
+
+    $(".search-area").show();
+    $(".library-area").hide();
+
+    $(".main-title").removeClass("show-breadcrumb");
+    $(".main-title .main-heading").html("Search Library");
+    $(".main-breadcrumb").html("");
+    $(".main-title .main-icon").addClass("fa-search").removeClass("fa-chevron-left fa-hdd");
+
+    // $(".title-nav").css("display", "flex");
+
+    let load_search_instance = ++load_search_counter;
+
+    $("body").removeClass(function (index, className) {
+        return (className.match(/(^|\s)library-tag-\S+/g) || []).join(' ');
+    }).addClass("library-search");
+
+    $(".paper-box").remove();
+
+    mySpires.api({lookup: q}).then((results) => {
+        let records = Object.values(results);
+
+        records.sort(function(a, b) {
+            let aa = a.updated,
+                bb = b.updated;
+            return (aa < bb) ? 1 : (aa > bb) ? -1 : 0;
+        });
+
+        for(let record of records.slice(0,12)) {
+            if(load_search_instance === load_search_counter) {
+                let a = new mySpires_Box(record, ".search-results");
+                a.box.show();
+
+                a.bar.record.busy.then(() => {
+                    let title = a.title.find("a").html();
+                    let comments = a.bar.comments.html();
+
+                    let qArray = q.split(" ");
+                    for(let qBit of qArray) {
+                        let pattern = new RegExp("("+qBit+")", "gi");
+                        title = title.replace(pattern, "\[\(\[$1\]\)\]");
+                        comments = comments.replace(pattern, "\[\(\[$1\]\)\]");
+
+                        a.bar.tags.find(".paper-tag").each(function() {
+                            let tag = $(this).attr("data-original-title");
+                            if(!tag) tag = $(this).attr("title");
+
+                            if(pattern.test(tag))
+                                $(this).addClass("mark");
+                        });
+
+                        a.authors.find(".paper-author").each(function() {
+                            let author = $(this).attr("data-original-title");
+                            if(!author) author = $(this).attr("title");
+
+                            if(pattern.test(author))
+                                $(this).addClass("mark");
+                        });
+                    }
+
+                    title = title.replace(/(\[\(\[)/g, "<mark>").replace(/(]\)])/g, "</mark>");
+                    a.title.find("a").html(title);
+
+                    comments = comments.replace(/(\[\(\[)/g, "<mark>").replace(/(]\)])/g, "</mark>");
+                    a.bar.comments.html(comments);
+                });
+            }
+        }
+    })
+}
+
+$(function() {
+    $(".search-field").on("keyup", function(e) {
+        if((/^[a-zA-Z0-9- ]$/.test(e.key) || e.key === "Backspace" || e.key === "Delete")) load_search();
+    });
+
+    $(".main-search-bar").submit((e) => {
+        e.preventDefault();
+        load_search();
+    });
+
+    $(".main-search-bar .search-reset").click(() => {
+        load_search("");
+    });
+
+    $(document).on("keyup", (e) => {
+        if(e.key === "Escape") load_search("");
+    })
+});
 
 $(function() {
     goto_tag((new URLSearchParams(window.location.search)).get("tag"), true);

@@ -1,3 +1,13 @@
+// Call mySa on every page load.
+
+$(function () {
+    $("body").addClass("mySpires-context");
+});
+
+$.post(mySpires.server + "api/mysa.php", function (response) {
+    console.log(response);
+});
+
 $("#close-foot-message").click(function() {
     $("#foot-message").hide();
 });

@@ -40,6 +40,14 @@ class mySpires {
         return this.preparing;
     }
 
+    static get is_plugin_content_script() {
+        if(typeof browser !== 'undefined' && typeof browser.extension !== 'undefined') {
+            if(typeof browser.extension.getBackgroundPage === 'undefined') return true;
+            else if(browser.extension.getBackgroundPage() !== window) return true;
+        }
+        return false;
+    }
+
     static get hostname() {
         if(location.host === "dev.myspires.ajainphysics.com") return location.host;
         return "myspires.ajainphysics.com"
@@ -63,6 +71,9 @@ class mySpires {
      * @returns {Promise} - A promise which resolves to the response from the API
      */
     static api(args) {
+        // Tunnel through the background page if on a content script.
+        if(this.is_plugin_content_script) return mySpires_Plugin.api(args);
+
         return new Promise((resolve, reject) => {
             $.ajax({
                 type: "POST",
@@ -144,6 +155,7 @@ class mySpires_Record {
      */
     constructor(query, field, source) {
         this.busy = Promise.resolve();
+        this.fields = ["id", "inspire", "arxiv", "ads"];
 
         switch(typeof(query)) {
             case "string":
@@ -163,11 +175,13 @@ class mySpires_Record {
 
         this.id = record.id;
         this.inspire = record.inspire;
+        this.ads = record.ads;
         this.arxiv = record.arxiv;
         this.arxiv_v = record.arxiv_v;
         this.bibkey = record.bibkey;
         this.title = record.title;
         this.author = record.author;
+        this.author_id = record.author_id;
         this.abstract = record.abstract;
         this.published = record.published;
         this.doi = record.doi;
@@ -227,10 +241,13 @@ class mySpires_Record {
         this.busy = new Promise((resolve, reject) => {
             this.busy.then(() => { // Continue after last task has finished.
                 let opts;
-                if(this.id) opts = {save: this.id, field: "id"};
-                else if(this.inspire) opts = {save: this.inspire, field: "inspire"};
-                else if(this.arxiv) opts = {save: this.arxiv, field: "arxiv"};
-                else {
+                for(let field of this.fields) {
+                    if(this[field]) {
+                        opts = {save: this[field], field: field};
+                        break;
+                    }
+                }
+                if(!opts) {
                     reject("No identifier found to save the record.");
                     return;
                 }

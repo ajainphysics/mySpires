@@ -1,0 +1,29 @@
+@import "variables";
+
+#history-disabled {
+  margin-bottom: 1.5rem;
+
+  .enable-history-button {
+    display: block;
+    margin: 1.2rem auto;
+  }
+}
+
+.history-section {
+  .history-title {
+    cursor: pointer;
+    display: none;
+  }
+}
+
+.history-section .paper-spinner-wrapper {
+  width: unset;
+  margin: unset;
+  position: absolute;
+  right: 25px;
+  top: 7px;
+
+  i {
+    font-size: 150%;
+  }
+}

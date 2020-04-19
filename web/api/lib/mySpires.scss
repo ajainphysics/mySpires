@@ -1,0 +1,407 @@
+.mySpires-context {
+  .mySpires-bar {
+    text-align: left;
+    line-height: 1;
+
+    &, input, textarea, button {
+      font-family: "Lato", sans-serif;
+    }
+
+    display: none;
+    margin-top: 5px;
+
+    .form-input {
+      display: none;
+    }
+
+    .btn {
+      padding: 1px 8px;
+      font-size: 80%;
+      font-weight: 600;
+      cursor: pointer;
+
+      margin-right: 2px;
+      margin-bottom: 2px;
+
+      .tag-level-bars {
+        display: inline-block;
+        margin-left: -3px;
+        margin-right : 3px;
+
+        span {
+          border-left: 2px solid #555;
+          border-radius: 5px;
+          display: inline-block;
+        }
+      }
+
+      &:hover {
+        .tag-level-bars span {
+          border-left-color: #F5F5F5;
+        }
+      }
+    }
+
+    .toolbar {
+      display: flex;
+      flex-direction: row;
+      height: unset;
+      border: none;
+      margin-bottom: -2px;
+    }
+
+    .tooltitle {
+      font-weight: 600;
+      float: left;
+      margin-top: 3px;
+      margin-right: 7px;
+    }
+
+    .buttons-wrapper {
+      display: inline-block;
+    }
+
+    .paper-comments {
+      font-size: 85%;
+      line-height: normal;
+      color: darkgreen;
+      margin-bottom: 0;
+      margin-top: 10px;
+    }
+
+    .awesomplete {
+      width: 100%;
+      display: block;
+    }
+
+    .tags-input {
+      padding: 3px 8px;
+      border: 1px solid gray;
+      border-radius: .2rem;
+      font-size: 80%;
+      font-weight: 600;
+      font-family: "Lato", sans-serif;
+      width: 100%;
+    }
+
+    .comments-input {
+      padding: 3px 8px;
+      border: 1px solid gray;
+      border-radius: 5px;
+      font-size: 85%;
+      font-family: "Lato", sans-serif;
+      color: darkgreen;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      width: 100%;
+    }
+
+    .tags-warning {
+      font-size: 75%;
+      margin-top: 0;
+      margin-bottom: 5px;
+      line-height: 1.2;
+      color: #dc3545;
+      display: none;
+    }
+
+    .form-buttons {
+      display: flex;
+    }
+
+    .tags-wrapper {
+      float: left;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .paper-tag {
+      .delete-tag {
+        display: none;
+        z-index: 2;
+        margin: 0 -1px 0 2px;
+      }
+    }
+
+    .rot-dots {
+      flex-shrink: 0;
+
+      width: 15px;
+      height: 17px;
+      margin-left: 2px;
+      overflow: hidden;
+      margin-top: 3px;
+
+      cursor: pointer;
+
+      .rot-dots-wrapper {
+        width: 100px;
+        height: 100px;
+        margin-top: -40%;
+        margin-left: -15%;
+        transform: scale(0.18);
+        transform-origin: 0 0;
+      }
+
+      .ball {
+        margin-left: 50%;
+        margin-top: 6%;
+        background: #808080;
+        width: 25%;
+        height: 25%;
+        border-radius: 50%;
+
+        -o-transition: .15s;
+        -ms-transition: .15s;
+        -moz-transition: .15s;
+        -webkit-transition: .15s;
+        transition: .15s;
+      }
+
+      &:hover .ball {
+        background: #343a40;
+      }
+
+      &.busy {
+        cursor: wait;
+
+        .ball:nth-child(2) {
+          animation: rotate-1 1s linear infinite;
+          z-index: 2;
+        }
+      }
+    }
+
+    &.smallbar {
+      .btn {
+        padding: 0 5px;
+        font-size: 75%;
+      }
+
+      .tooltitle {
+        font-size: 85%;
+        margin-top: 2px;
+      }
+
+      .rot-dots {
+        height: 15px;
+        margin-left: 0;
+        margin-top: 2.5px;
+
+        .rot-dots-wrapper {
+          margin-left: -5%;
+          transform: scale(0.15);
+        }
+      }
+
+      .paper-comments {
+        margin-top: 3px;
+      }
+    }
+  }
+
+  &.unsaved .mySpires-bar,
+  &.binned .mySpires-bar {
+    .edit-button, .toolbar .sep, .tags-wrapper, .paper-comments {
+      display: none !important;
+    }
+  }
+
+  &.saved .mySpires-bar,
+  &.binned .mySpires-bar {
+    .save-button {
+      display: none !important;
+    }
+  }
+
+  &.saved .mySpires-bar,
+  &.unsaved .mySpires-bar {
+    .restore-button {
+      display: none !important;
+    }
+  }
+
+  .mySpires-bar {
+    .erase-button {
+      display: none;
+    }
+  }
+
+  #page-bin .binned .mySpires-bar .erase-button {
+    display: inline-block;
+  }
+
+  .mySpires-bar.homeserver {
+    .toolbar {
+      .tooltitle {
+        display: none;
+      }
+    }
+  }
+
+  @keyframes rotate-1 {
+    0% {
+      transform: rotate(0deg);
+      transform-origin: center 112%;
+    }
+    25% {
+      transform: rotate(-180deg);
+      transform-origin: center 112%;
+    }
+    50% {
+      transform: rotate(-360deg);
+      transform-origin: center 112%;
+    }
+    50.1% {
+      transform-origin: center -12%;
+    }
+    75% {
+      transform: rotate(-180deg);
+      transform-origin: center -12%;
+    }
+    100% {
+      transform: rotate(0deg);
+      transform-origin: center -12%;
+    }
+  }
+
+  .mySpires-box {
+    line-height: 1.2;
+
+    mark, .mark {
+      padding: 0 0.2em;
+      background-color: #fff3b1;
+    }
+
+    .paper-tag.mark:not(:hover) {
+      background-color: #fff3b1;
+    }
+
+    .img-wrapper {
+      height: 143px;
+      margin-bottom: 10px;
+      overflow: hidden;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 1px 1px 5px #808080;
+
+      img.lifted {
+        margin-top: -20px;
+      }
+    }
+
+    .title-wrapper {
+      font-size: 90%;
+
+      .paper-title {
+        margin: 0;
+        color: black;
+
+        a {
+          text-decoration: none;
+          color: unset;
+        }
+      }
+    }
+
+    .author-wrapper {
+      margin-top: 3px;
+      font-size: 80%;
+    }
+
+    .date-wrapper {
+      margin-top: 5px;
+      font-size: 75%;
+    }
+
+    .paper-authors {
+      color: #808080;
+      margin: 0;
+
+      a {
+        text-decoration: none;
+        color: unset;
+      }
+    }
+
+    .published-date {
+      font-weight: 600;
+      color: brown;
+    }
+
+    .modified-date {
+      font-weight: 600;
+      color: rosybrown;
+    }
+
+    .date-bullet {
+      padding: 0 5px;
+      color: lightgray;
+    }
+
+    .links-wrapper {
+      font-size: 75%;
+      font-weight: 600;
+      margin-top: 5px;
+
+      a {
+        text-decoration: none;
+        color: #565656;
+      }
+
+      a:not(:last-child)::after {
+        content: "|";
+        padding: 0 3px;
+        color: lightgray;
+      }
+    }
+
+    .doi-wrapper {
+      display: none;
+      margin-top: -3px;
+      a {
+        font-size: 75%;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .mySpires-boxes-minimal .mySpires-box {
+    .img-wrapper {
+      display: none;
+    }
+    .title-wrapper {
+      margin-top: 0;
+    }
+    .author-wrapper {
+      margin-top: 3px;
+      line-height: normal;
+    }
+    .links-wrapper {
+      font-size: 85%;
+    }
+    .mySpires-bar {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .date-bullet {
+      padding: 0 2px;
+      color: lightgray;
+    }
+    .paper-comments {
+      margin-bottom: 1px;
+      margin-top: 3px;
+    }
+    .edit-button {
+      margin-top: 2px;
+    }
+  }
+
+  .ui-tooltip {
+    font-size: 10px;
+    background: #333;
+    color: #F5F5F5;
+    padding: 2px 5px;
+    border-radius: 5px;
+  }
+}

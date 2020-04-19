@@ -19,10 +19,10 @@ mySpiresSearch.urgentBreak = function() {
 mySpiresSearch.urgentBreak();
 
 $(function() {
-    mySpiresSearch.$searchBox = $("#welcome-search");
-    mySpiresSearch.$searchInput = mySpiresSearch.$searchBox.find(".searchfield");
-    mySpiresSearch.$searchBarReset = mySpiresSearch.$searchBox.find(".search-bar-reset");
-    mySpiresSearch.$searchBtn = mySpiresSearch.$searchBox.find(".searchbtn");
+    mySpiresSearch.$searchBox = $(".main-search-bar");
+    mySpiresSearch.$searchInput = mySpiresSearch.$searchBox.find(".search-field");
+    mySpiresSearch.$searchBarReset = mySpiresSearch.$searchBox.find(".search-reset");
+    mySpiresSearch.$searchBtn = mySpiresSearch.$searchBox.find(".search-button");
     mySpiresSearch.$pagination = $(".search-pagination");
     mySpiresSearch.$paginationFirst = mySpiresSearch.$pagination.find(".search-pagination-first");
     mySpiresSearch.$paginationPrevious = mySpiresSearch.$pagination.find(".search-pagination-previous");
@@ -179,7 +179,7 @@ mySpiresSearch.set = function(searchQuery = "", jrec = 1) {
                 if(record.abstract)
                     record.abstract = record.abstract.replace(/`/g, '\'');
 
-                $("#welcome-search-results").append(
+                $(".search-results").append(
                     '<div id="search-result-' + record.inspire + '" class="search-result">' +
                     '    <div class="id-wrapper">' +
                     '        <span class="inspire-id"><a href="https://inspirehep.net/record/' + record.inspire + '" target="_blank">' +
@@ -356,3 +356,18 @@ window.onpopstate = function (e) {
 
     mySpiresSearch.set(searchQuery, jrec);
 };
+
+$(function() {
+    $.ajax({
+        url: "https://inspirehep.net/api/literature/?q=find+ea+jain,+akash&author_count=10+authors+or+less&sort=mostrecent&size=25&page=1",
+        type: "GET",
+        beforeSend: function(xhr){xhr.setRequestHeader('Accept', 'application/x-bibtex');},
+        success: function(data) {
+            console.log(data);
+        },
+        error: function (e) {
+            console.log(e);
+        }
+    });
+    console.log(2);
+});

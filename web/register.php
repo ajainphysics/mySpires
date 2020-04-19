@@ -1,10 +1,15 @@
 <?php
 
+use function library\tools\null_populate;
+use function mySpires\users\forgot_password;
+use function mySpires\users\register;
+use function mySpires\users\user;
+
 session_start();
 
 include_once "lib/settings.php";
 
-if(mySpires::user()) {
+if(user()) {
     header("Location: /");
 }
 
@@ -17,7 +22,7 @@ null_populate($_GET, ["forgot", "reset"]);
 if($_POST["registration"]) {
     $success = false; // If this is still false at the end, something went wrong.
     if(webapp::validate_recaptcha($_POST["g-recaptcha-response"])) {
-        $success = mySpires::register((object)$_POST);
+        $success = register((object)$_POST);
     }
 
     if($success) {
@@ -31,8 +36,7 @@ if($_POST["registration"]) {
 if($_POST["forgot-password"]) {
     $success = false;
     if(webapp::validate_recaptcha($_POST["g-recaptcha-response"])) {
-        $success = mySpires::forgot_password($_POST["forgot-username"]);
-        // $success = mySpiresUser::register((object)$_POST);
+        $success = forgot_password($_POST["forgot-username"]);
     }
 
     if($success) {
@@ -43,12 +47,12 @@ if($_POST["forgot-password"]) {
     }
 }
 
-if($_GET["reset"] && !(new mySpires_User($_GET["username"]))->check_code($_GET["code"])) {
+if($_GET["reset"] && !(new \mySpires\User($_GET["username"]))->check_code($_GET["code"])) {
     header("Location: /");
 }
 
 if($_POST["reset-password"]) {
-    $user = new mySpires_User($_POST["username"]);
+    $user = new \mySpires\User($_POST["username"]);
     $success = $user->reset_password($_POST["code"], $_POST["password"]);
 
     if($success) {
@@ -84,7 +88,7 @@ if($_POST["reset-password"]) {
                         Forgot your password? Tell us your username or email address and we will take it from there.
                     </p>
 
-                    <form method="post" class="forgot-password-form" novalidate>
+                    <form method="post" class="forgot-password-form fancy-form" novalidate>
                         <input type="hidden" name="forgot-password" value="1">
 
                         <small class="text-muted"><label for="forgot-username" class="label-required">Username/Email</label></small>
@@ -104,7 +108,7 @@ if($_POST["reset-password"]) {
                         Nearly done! Set a new password here.
                     </p>
 
-                    <form method="post" class="reset-password-form" novalidate>
+                    <form method="post" class="reset-password-form fancy-form" novalidate>
                         <input type="hidden" name="reset-password" value="1">
                         <input type="hidden" name="code" value="<?php echo $_GET["code"]; ?>">
 
@@ -128,7 +132,7 @@ if($_POST["reset-password"]) {
                         Hello there! Thanks for your interest in mySpires. Few basic details and your account will be good to go.
                     </p>
 
-                    <form method="post" class="register-form" novalidate>
+                    <form method="post" class="register-form fancy-form" novalidate>
                         <input type="hidden" name="registration" value="1">
 
                         <small class="text-muted"><label for="fname" class="label-required">First Name</label></small>

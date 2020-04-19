@@ -28,7 +28,7 @@ mySpiresHistory.load = function() {
             if(total) {
                 $("#residual-history-message").show();
             } else {
-                $("#empty-history-message").show();
+                $("#empty-message").show();
             }
 
             jQuery.each(records, function (index, record) {

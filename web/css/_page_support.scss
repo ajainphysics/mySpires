@@ -1,0 +1,84 @@
+@import "variables";
+
+.help-toc {
+  max-width: 400px;
+
+  .list-group-item {
+    padding: 7px 15px;
+  }
+}
+
+.help-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #d4d4d4;
+
+  &:last-child {
+    border: none;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+
+  p > .btn {
+    font-size: 75%;
+    padding: 0 5px;
+    font-weight: bold;
+  }
+
+  .fa-ellipsis-v {
+    color: rgb(128, 128, 128);
+    font-size: 75%;
+    padding: 0 2px;
+  }
+
+  .support-form-wrapper {
+    // border-right: 1px solid #d4d4d4;
+  }
+
+  .contact-wrapper {
+    display: flex;
+  }
+
+  .contact-box {
+    margin: auto 10px;
+    height: 300px;
+    width: 100%;
+
+    @media (min-width: $min-md) {
+      border-left: 1px solid #d4d4d4;
+    }
+
+    @media (max-width: $max-sm) {
+      margin-top: 30px;
+    }
+
+    img {
+      border-radius: 50%;
+      height: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    p.contact-name {
+      font-size: 2rem;
+      margin-bottom: 0;
+    }
+
+    p.contact-subtitle {
+      color: #848484;
+      margin-bottom: 0;
+    }
+  }
+}

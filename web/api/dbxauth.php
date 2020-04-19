@@ -1,18 +1,20 @@
 <?php
 
+use function mySpires\config;
+use function mySpires\users\user;
+
 session_start();
 
 include_once(__DIR__ . "/../lib/settings.php");
-include_once(__DIR__ . "/lib/mySpires.php");
 
-
-$opts = include(__DIR__ . "/../../.myspires_config.php");
-$opts = $opts->dropbox;
+$config = config();
+$server = $config->server;
+$opts = $config->dropbox;
 
 $redirect = $_GET["redirect"];
 
-if(array_key_exists("user", $_GET) && $_GET["user"]) $control_user = new mySpires_User($_GET["user"]);
-else $control_user = mySpires::user();
+if(array_key_exists("user", $_GET) && $_GET["user"]) $control_user = new \mySpires\User($_GET["user"]);
+else $control_user = user();
 
 
 if(!$control_user->auth()) header("Location: " . webRoot);
@@ -30,14 +32,14 @@ if($_GET["unlink"] == 1) {
     $control_username = $e[0];
     $redirect = $e[1];
 
-    $dbx = (new mySpires_User($control_username))->dropbox($code);
+    $dbx = (new \mySpires\User($control_username))->dropbox($code);
     header("Location: ". $redirect);
 
 } else {
     $data = Array(
         "response_type" => "code",
         "client_id"     => $opts->key,
-        "redirect_uri"  => mySpires::$server . "api/dbxauth.php",
+        "redirect_uri"  => $server->location . "api/dbxauth.php",
         "state"         => $control_user->username . "@@@" . $redirect
     );
     $authURL = "https://www.dropbox.com/oauth2/authorize?" . http_build_query($data);

@@ -1,0 +1,41 @@
+.stat-table {
+  max-height: 200px;
+  overflow-y: scroll;
+
+  table {
+    margin-bottom: 0;
+    font-size: 70%;
+  }
+}
+
+.panel-head {
+  display: flex;
+  margin-bottom: 0.5rem;
+
+  h4 {
+    margin: 0;
+    flex-grow: 1;
+  }
+}
+
+#mysa-wake-btn {
+  width: 90px;
+}
+
+#mysa-output {
+  display: none;
+}
+
+pre {
+  font-size: 70%;
+}
+
+section {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #d4d4d4;
+
+  :last-child {
+    margin-bottom: 0;
+  }
+}

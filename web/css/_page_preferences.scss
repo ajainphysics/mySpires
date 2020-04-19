@@ -1,0 +1,22 @@
+@import "variables";
+
+form {
+  margin-bottom: 30px;
+  border-bottom: 1px solid $light-outline;
+  padding-bottom: 10px;
+
+  .form-noinput {
+    padding: calc(.5rem - 1px * 2) 0;
+
+    img.dbxthumb {
+      height: 34px;
+      margin-top: calc(-.5rem + 1px * 2);
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+  }
+
+  h3 i {
+    margin-right: 5px;
+  }
+}

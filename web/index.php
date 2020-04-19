@@ -1,12 +1,14 @@
 <?php
 
+use function library\tools\null_populate;
+
 include_once "lib/settings.php";
 
 null_populate($_POST, ["username", "password", "remember"]);
 null_populate($_GET, ["logout", "q", "source"]);
 
 if($_GET["logout"] == 1) {
-    mySpires::logout();
+    \mySpires\users\logout();
     header("Location: /");
 }
 
@@ -17,7 +19,7 @@ $password = $_POST["password"];
 if($_POST["remember"] == 1) $remember = true;
 else $remember = false;
 
-if($username && $password && !mySpires::login($username, $password, $remember)) {
+if($username && $password && !\mySpires\users\login($username, $password, $remember)) {
     $loginError = "Login Failed";
 }
 
@@ -42,7 +44,7 @@ if($_GET["source"] == "registration_successful") {
     
 <div class="main-wrapper">
 
-    <?php if(!mySpires::user()) { ?>
+    <?php if(!\mySpires\users\user()) { ?>
 
     <div class="welcome-header">
         <div class="container">
@@ -65,30 +67,26 @@ if($_GET["source"] == "registration_successful") {
 
     <?php } ?>
 
-    <div class="busy-loader-wrapper">
-        <div class="loader busy-loader"></div>
-    </div>
-
     <div class="main-content">
         <div class="container">
 
             <?php webapp::display_alerts(); ?>
 
-            <?php if(mySpires::user()) {
+            <?php if(\mySpires\users\user()) {
                 $q = $_GET["q"];
-                if(!$q) $q = mySpires::user()->info->inspire_query;
+                if(!$q) $q = \mySpires\users\user()->info->inspire_query;
                 if(!$q) $q = "find primarch hep-th";
                 ?>
 
                 <iframe name="pseudo-search-target" src="about:blank" style="display: none;"></iframe>
 
-                <form id="welcome-search" class="welcome-search" target="pseudo-search-target" action="about:blank" autocomplete="on">
+                <form class="main-search-bar" target="pseudo-search-target" action="about:blank" autocomplete="on">
                     <div class="form-group">
-                        <input class="searchfield form-control form-control-lg" name="q" type="text"
+                        <input class="search-field form-control form-control-lg" name="q" type="text"
                                placeholder="Search" value = "<?php echo $q; ?>">
                         <div>
-                            <span class="fa fa-times search-bar-reset"></span>
-                            <button type="submit" class="searchbtn btn btn-primary btn-lg pull-right">Go</button>
+                            <span class="fa fa-times search-reset"></span>
+                            <button type="submit" class="search-button btn btn-primary btn-lg pull-right">Go</button>
                         </div>
                     </div>
                     <small id="passwordHelpBlock" class="form-text text-muted">
@@ -116,7 +114,7 @@ if($_GET["source"] == "registration_successful") {
                     </ul>
                 </nav>
 
-                <div class="search-results" id="welcome-search-results"></div>
+                <div class="search-results"></div>
 
                 <nav class="search-pagination" data-rg="" data-jrec="" data-total-results="">
                     <ul class="pagination pagination-sm">

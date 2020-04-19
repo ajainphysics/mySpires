@@ -1,0 +1,44 @@
+@import "variables";
+
+#foot-alerts {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+
+  .alert {
+    max-width: 500px;
+    margin-right: 0;
+    margin-left: auto;
+    font-size: 80%;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.95;
+  }
+
+  .close {
+    font-size: 150%;
+  }
+}
+
+#foot-message {
+  display: none;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  padding: 15px 0;
+}
+
+#close-foot-message {
+  padding-top: 4px;
+  cursor: pointer;
+}
+
+#install-home-app-notification {
+  display: none;
+
+  img {
+    height: 35px;
+    width: auto;
+    margin: -10px 10px -10px 0;
+  }
+}

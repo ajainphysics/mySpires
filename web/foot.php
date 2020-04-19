@@ -20,10 +20,15 @@
 
 <script src="//resources.ajainphysics.com/awesomplete/awesomplete.min.js" async></script>
 
-<script src="js/global.js"></script>
+<script src="//resources.ajainphysics.com/jQuery.autoresize/1.04/autoresize.jquery.js" async></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
 
 <script src="api/lib/mySpires.js"></script>
 <script src="api/lib/mySpires_Bar.js"></script>
+<script src="api/lib/mySpires_Box.js"></script>
+
+<script src="js/global.js"></script>
 <script src="js/components.js"></script>
 
 <script src="//cdn.ajainphysics.com/refspires/refSpires.js"></script>
