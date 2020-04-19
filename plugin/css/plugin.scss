@@ -1,0 +1,63 @@
+.mySpires-context {
+
+  .myspires-search-bar {
+    text-align: left;
+    margin: 0;
+
+    .form-group {
+      display: flex;
+      margin-bottom: 0;
+    }
+
+    input.search-field {
+      font-size: 80%;
+      padding: 5px 10px;
+      border-radius: 15px;
+      height: 30px;
+    }
+
+    .search-help {
+      padding-left: 10px;
+      margin-bottom: -4px;
+      white-space: nowrap;
+      display: none;
+    }
+
+    .search-button {
+      position: absolute;
+      right: 10px;
+      border-radius: 0 15px 15px 0;
+      padding-left: 15px;
+      padding-right: 24px;
+      width: 50px;
+      height: 30px;
+    }
+  }
+
+  .myspires-search-results {
+    height: 232px;
+    overflow-y: scroll;
+    display: none;
+    text-align: left;
+    padding: 0 15px;
+    margin: 5px -15px;
+
+    .mySpires-box:not(:last-child) {
+      border-bottom: 1px solid #ddd;
+    }
+
+    .mySpires-box {
+      margin: 0 -5px;
+      padding: 5px 10px 5px;
+      cursor: pointer;
+    }
+  }
+
+  .record-wrapper .mySpires-box {
+    font-size: 85%;
+    .mySpires-bar {
+      font-size: 100%;
+    }
+  }
+
+}

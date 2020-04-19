@@ -1,0 +1,85 @@
+@import "variables";
+
+.bib-entries {
+  margin-left: -5px;
+  margin-right: -5px;
+}
+
+.bib-entry {
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 10px;
+
+  .bibtex {
+    font-size: 75%;
+    width: 100%;
+    overflow: hidden;
+    pre {
+      height: 150px;
+      margin-bottom: 5px;
+    }
+  }
+
+  .form-edit-bibtex .btn {
+    margin-right: 5px;
+    margin-bottom: 10px;
+    font-size: 90%;
+    padding: 2px 7px;
+  }
+
+  .found-box {
+    .paper-box {
+      display: block;
+    }
+
+    .mySpires-box {
+      background: white;
+      border-radius: 5px;
+      border: 1px solid #d4d4d4;
+      font-size: 90%;
+
+      .paper-wrapper {
+        padding: 5px;
+      }
+    }
+  }
+
+  .replace-button {
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .bibtex-wrapper {
+    border: 1px solid transparent;
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  &.record-duplicate pre,
+  &.record-found pre {
+      background-color: color.scale($context-primary, $lightness: 95%);
+  }
+
+  &.record-matched pre {
+    background: color.scale($context-warning, $lightness: 95%);
+  }
+
+  &.record-duplicate {
+    .duplicated-bibtex {
+      display: flex;
+      width: 100%;
+    }
+
+    .bibtex {
+      &:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+form#bib-form .form-control {
+  font-family: Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  font-size: 80%;
+  margin-bottom: 5px;
+}
